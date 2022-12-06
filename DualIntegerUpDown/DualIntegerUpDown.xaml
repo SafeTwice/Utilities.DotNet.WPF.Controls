@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="XtraControls.DualIntegerUpDown"
+             x:Name="ThisControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:XtraControls"
+             xmlns:etk="clr-namespace:Xceed.Wpf.Toolkit;assembly=DotNetProjects.Wpf.Extended.Toolkit"
+             mc:Ignorable="d"
+             d:DesignHeight="30" d:DesignWidth="400">
+    <Grid DataContext="{Binding ElementName=ThisControl}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding UpperValueWidth}"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="{Binding LowerValueWidth}"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <etk:ButtonSpinner Grid.Column="0" Spin="OnUpperSpin" BorderThickness="1" IsTabStop="False"
+                           ValidSpinDirection="{Binding ValidSpinDirection}">
+            <TextBox Text="{Binding UpperValueText}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"
+                     BorderThickness="0" FontSize="{Binding ValueFontSize}"
+                     MaxLength="{Binding UpperValueMaxLength}"
+                     PreviewTextInput="OnUpperValuePreviewTextInput"/>
+        </etk:ButtonSpinner>
+        <Label Grid.Column="1" Content="{Binding UpperLabel}" VerticalContentAlignment="Center"/>
+        <etk:ButtonSpinner Grid.Column="2" Spin="OnLowerSpin" BorderThickness="1" IsTabStop="False"
+                           ValidSpinDirection="{Binding ValidSpinDirection}">
+            <TextBox Text="{Binding LowerValueText}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"
+                     BorderThickness="0" FontSize="{Binding ValueFontSize}" 
+                     MaxLength="{Binding LowerValueMaxLength}"
+                     PreviewTextInput="OnLowerValuePreviewTextInput"/>
+        </etk:ButtonSpinner>
+        <Label Grid.Column="3" Content="{Binding LowerLabel}" VerticalContentAlignment="Center"/>
+    </Grid>
+</UserControl>
