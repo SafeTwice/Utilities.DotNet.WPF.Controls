@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XtraControls", "XtraControls\XtraControls.csproj", "{6A36F6AF-6CE4-4B17-A6B9-3F4C202AD1EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A36F6AF-6CE4-4B17-A6B9-3F4C202AD1EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A36F6AF-6CE4-4B17-A6B9-3F4C202AD1EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A36F6AF-6CE4-4B17-A6B9-3F4C202AD1EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A36F6AF-6CE4-4B17-A6B9-3F4C202AD1EC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1526AE08-B693-4BFC-9C95-E189F22A742D}
+	EndGlobalSection
+EndGlobal
