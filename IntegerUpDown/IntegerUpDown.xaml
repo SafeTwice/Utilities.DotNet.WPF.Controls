@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="XtraControls.IntegerUpDown"
+             x:Name="ThisControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:XtraControls"
+             xmlns:etk="clr-namespace:Xceed.Wpf.Toolkit;assembly=DotNetProjects.Wpf.Extended.Toolkit"
+             mc:Ignorable="d"
+             d:DesignHeight="30" d:DesignWidth="400">
+    <etk:ButtonSpinner DataContext="{Binding ElementName=ThisControl}" Spin="OnSpin" BorderThickness="1" IsTabStop="False"
+                       ValidSpinDirection="{Binding ValidSpinDirection}">
+        <TextBox HorizontalContentAlignment="Right" VerticalContentAlignment="Center"
+                 BorderThickness="0" MaxLength="{Binding ValueMaxLength}"
+                 PreviewTextInput="OnValuePreviewTextInput">
+            <TextBox.Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="Text" Value="{Binding DecoratedValueText, Mode=OneWay}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter Property="Text" Value="{Binding ValueText, Mode=TwoWay}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+    </etk:ButtonSpinner>
+</UserControl>
