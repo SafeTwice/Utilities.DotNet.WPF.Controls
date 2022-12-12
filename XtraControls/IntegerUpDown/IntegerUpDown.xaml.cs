@@ -1,20 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using Xceed.Wpf.Toolkit;
-using XtraControls.Utilities;
 
 namespace XtraControls
 {
     using ValueToTextFunc = Func<IntegerUpDown, int, string>;
-    using TextToValueFunc = Func<IntegerUpDown, string, int>;
-    using CheckIsValidTextFunc = Func<IntegerUpDown, string, bool>;
-    using CalculateMaxLengthFunc = Func<IntegerUpDown, int>;
 
     /// <summary>
     /// Interaction logic for IntegerUpDown.xaml
