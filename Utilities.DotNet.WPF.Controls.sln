@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XtraControls", "XtraControls\XtraControls.csproj", "{6A36F6AF-6CE4-4B17-A6B9-3F4C202AD1EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.DotNet.WPF.Controls", "Lib\Utilities.DotNet.WPF.Controls.csproj", "{6A36F6AF-6CE4-4B17-A6B9-3F4C202AD1EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

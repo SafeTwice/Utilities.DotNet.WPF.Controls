@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace XtraControls
+namespace Utilities.DotNet.WPF.Controls
 {
     public class FileSelectionBox : TextBox
     {

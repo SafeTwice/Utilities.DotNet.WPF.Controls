@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Xceed.Wpf.Toolkit;
 
-namespace XtraControls
+namespace Utilities.DotNet.WPF.Controls
 {
     /// <summary>
     /// Interaction logic for DualIntegerUpDown.xaml

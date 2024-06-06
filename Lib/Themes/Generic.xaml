@@ -2,6 +2,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/XtraControls;component/FileSelectionBox/FileSelectionBox.xaml"/>
+        <ResourceDictionary Source="/Utilities.DotNet.WPF.Controls;component/FileSelectionBox/FileSelectionBox.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
