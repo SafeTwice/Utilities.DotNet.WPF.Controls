@@ -1,0 +1,8 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="Utilities.DotNet.WPF.TextBox.MouseOver.BorderBrush" Color="#7EB4EA"/>
+    <SolidColorBrush x:Key="Utilities.DotNet.WPF.TextBox.KeyboardFocused.BorderBrush" Color="#569DE5"/>
+
+</ResourceDictionary>

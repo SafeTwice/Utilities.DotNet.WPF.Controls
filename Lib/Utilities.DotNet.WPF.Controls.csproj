@@ -13,4 +13,8 @@
         <PackageReference Include="DotNetProjects.Extended.Wpf.Toolkit" Version="5.0.106" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="PresentationFramework.Aero2" Condition="'$(TargetFramework)' == 'net48'"/>
+    </ItemGroup>
+
 </Project>
