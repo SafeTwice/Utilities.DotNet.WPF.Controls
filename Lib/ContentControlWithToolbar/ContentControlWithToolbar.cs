@@ -18,28 +18,62 @@ namespace Utilities.DotNet.WPF.Controls
         //                           PUBLIC PROPERTIES
         //===========================================================================
 
+        /// <summary>
+        /// Dependency property for <see cref="IsHeaderVisible"/>.
+        /// </summary>
         public static readonly DependencyProperty IsHeaderVisibleProperty =
             DependencyProperty.Register( nameof( IsHeaderVisible ), typeof( bool ), typeof( ContentControlWithToolbar ),
                 new FrameworkPropertyMetadata( false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnIsHeaderVisibleChanged ) );
 
+        /// <summary>
+        /// Indicates and sets if the toolbar is visible.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
+        [Description( "Indicates and sets if the toolbar is visible." )]
         public bool IsHeaderVisible
         {
             get => (bool) GetValue( IsHeaderVisibleProperty );
             set => SetValue( IsHeaderVisibleProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="HeaderMargin"/>.
+        /// </summary>
         public static readonly DependencyProperty HeaderMarginProperty =
             DependencyProperty.Register( nameof( HeaderMargin ), typeof( Thickness ), typeof( ContentControlWithToolbar ),
                 new FrameworkPropertyMetadata( new Thickness() ) );
 
+        /// <summary>
+        /// "Margin around the toolbar."
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
+        [Description( "Margin around the toolbar." )]
         public Thickness HeaderMargin
         {
             get => (Thickness) GetValue( HeaderMarginProperty );
             set => SetValue( HeaderMarginProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for <see cref="HeaderMinWidth"/>.
+        /// </summary>
+        public static readonly DependencyProperty HeaderMinWidthProperty =
+            DependencyProperty.Register( nameof( HeaderMinWidth ), typeof( double ), typeof( ContentControlWithToolbar ),
+                new FrameworkPropertyMetadata( 0.0 ) );
+
+        /// <summary>
+        /// Minimum width of the toolbar.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        [TypeConverter( typeof( LengthConverter ) )]
+        [Description( "Minimum width of the toolbar." )]
+        public double HeaderMinWidth
+        {
+            get => (double) GetValue( HeaderMinWidthProperty );
+            set => SetValue( HeaderMinWidthProperty, value );
         }
 
         //===========================================================================

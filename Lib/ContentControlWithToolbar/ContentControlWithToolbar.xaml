@@ -12,6 +12,7 @@
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           ContentStringFormat="{TemplateBinding ContentStringFormat}"/>
                         <local:SlidingToolbar x:Name="PART_Toolbar"
+                                              MinWidth="{TemplateBinding HeaderMinWidth}"
                                               Margin="{TemplateBinding HeaderMargin}">
                             <ContentPresenter Content="{TemplateBinding Header}"
                                               ContentTemplate="{TemplateBinding HeaderTemplate}"
