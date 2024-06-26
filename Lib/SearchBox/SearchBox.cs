@@ -2,7 +2,6 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -56,46 +55,6 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the maximum height of the drop-down popup.
-        /// </summary>
-        public static readonly DependencyProperty MaxDropDownHeightProperty =
-            DependencyProperty.Register( nameof( MaxDropDownHeight ), typeof( double ), typeof( SearchBox ),
-                new FrameworkPropertyMetadata( SystemParameters.PrimaryScreenHeight / 3 ) );
-
-        /// <summary>
-        /// Maximum height of the drop-down popup.
-        /// </summary>
-        [Bindable( true )]
-        [Category( "Layout" )]
-        [Browsable( true )]
-        [TypeConverter( typeof( LengthConverter ) )]
-        [Description( "The maximum height of the drop-down popup." )]
-        public double MaxDropDownHeight
-        {
-            get => (double) GetValue( MaxDropDownHeightProperty );
-            set => SetValue( MaxDropDownHeightProperty, value );
-        }
-
-        /// <summary>
-        /// Dependency property for the search button position.
-        /// </summary>
-        public static readonly DependencyProperty ClearButtonPositionProperty =
-            DependencyProperty.Register( nameof( ClearButtonPosition ), typeof( EHorizontalPosition ), typeof( SearchBox ),
-                new FrameworkPropertyMetadata( EHorizontalPosition.Right, OnChangeThatNeedsClearButtonRearrangement ) );
-
-        /// <summary>
-        /// Position of the clear button.
-        /// </summary>
-        [Bindable( true )]
-        [Browsable( true )]
-        [Description( "Position of the clear button." )]
-        public EHorizontalPosition ClearButtonPosition
-        {
-            get => (EHorizontalPosition) GetValue( ClearButtonPositionProperty );
-            set => SetValue( ClearButtonPositionProperty, value );
-        }
-
-        /// <summary>
         /// Dependency property for the trim search text flag.
         /// </summary>
         public static readonly DependencyProperty TrimSearchTextProperty =
@@ -112,6 +71,25 @@ namespace Utilities.DotNet.WPF.Controls
         {
             get => (bool) GetValue( TrimSearchTextProperty );
             set => SetValue( TrimSearchTextProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for the search button position.
+        /// </summary>
+        public static readonly DependencyProperty ClearButtonPositionProperty =
+            DependencyProperty.Register( nameof( ClearButtonPosition ), typeof( EHorizontalPosition ), typeof( SearchBox ),
+                new FrameworkPropertyMetadata( EHorizontalPosition.Right, OnChangeThatNeedsRearrangement ) );
+
+        /// <summary>
+        /// Position of the clear button.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        [Description( "Position of the clear button." )]
+        public EHorizontalPosition ClearButtonPosition
+        {
+            get => (EHorizontalPosition) GetValue( ClearButtonPositionProperty );
+            set => SetValue( ClearButtonPositionProperty, value );
         }
 
         /// <summary>
@@ -142,6 +120,45 @@ namespace Utilities.DotNet.WPF.Controls
         {
             get => (int) GetValue( AutoHistorySizeProperty );
             set => SetValue( AutoHistorySizeProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for the hint text.
+        /// </summary>
+        public static readonly DependencyProperty HintTextProperty =
+            DependencyProperty.Register( nameof( HintText ), typeof( string ), typeof( SearchBox ),
+                new FrameworkPropertyMetadata( null ) );
+
+        /// <summary>
+        /// Hint text that is displayed when the search box is empty.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        public string HintText
+        {
+            get => (string) GetValue( HintTextProperty );
+            set => SetValue( HintTextProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for the maximum height of the drop-down popup.
+        /// </summary>
+        public static readonly DependencyProperty MaxDropDownHeightProperty =
+            DependencyProperty.Register( nameof( MaxDropDownHeight ), typeof( double ), typeof( SearchBox ),
+                new FrameworkPropertyMetadata( SystemParameters.PrimaryScreenHeight / 3 ) );
+
+        /// <summary>
+        /// Maximum height of the drop-down popup.
+        /// </summary>
+        [Bindable( true )]
+        [Category( "Layout" )]
+        [Browsable( true )]
+        [TypeConverter( typeof( LengthConverter ) )]
+        [Description( "The maximum height of the drop-down popup." )]
+        public double MaxDropDownHeight
+        {
+            get => (double) GetValue( MaxDropDownHeightProperty );
+            set => SetValue( MaxDropDownHeightProperty, value );
         }
 
         /// <summary>
@@ -191,6 +208,18 @@ namespace Utilities.DotNet.WPF.Controls
             private set => SetValue( ClearButtonMarginPropertyKey, value );
         }
 
+        private static readonly DependencyPropertyKey HintMarginPropertyKey =
+            DependencyProperty.RegisterReadOnly( nameof( HintMargin ), typeof( Thickness ), typeof( SearchBox ),
+                new FrameworkPropertyMetadata( new Thickness() ) );
+
+        [Bindable( true )]
+        [Browsable( false )]
+        internal Thickness HintMargin
+        {
+            get => (Thickness) GetValue( HintMarginPropertyKey.DependencyProperty );
+            private set => SetValue( HintMarginPropertyKey, value );
+        }
+
         //===========================================================================
         //                             PUBLIC EVENTS
         //===========================================================================
@@ -221,9 +250,9 @@ namespace Utilities.DotNet.WPF.Controls
 
             ItemsSourceProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( null, null, CoerceItemsSource ) );
 
-            BorderThicknessProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnChangeThatNeedsClearButtonRearrangement ) );
+            BorderThicknessProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnChangeThatNeedsRearrangement ) );
 
-            PaddingProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnChangeThatNeedsClearButtonRearrangement ) );
+            PaddingProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnChangeThatNeedsRearrangement ) );
         }
 
         /// <summary>
@@ -269,55 +298,71 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         //===========================================================================
+        //                            PROTECTED METHODS
+        //===========================================================================
+
+        protected override void OnGotKeyboardFocus( KeyboardFocusChangedEventArgs e )
+        {
+            if( !e.Handled && ( m_comboBox != null ) && ( e.NewFocus == this ) )
+            {
+                Keyboard.Focus( m_comboBox );
+                e.Handled = true;
+            }
+        }
+
+        //===========================================================================
         //                            PRIVATE METHODS
         //===========================================================================
 
         private void OnLoaded( object sender, RoutedEventArgs e )
         {
-            ArrangeClearButton();
+            Arrange();
         }
 
-        private static void OnChangeThatNeedsClearButtonRearrangement( DependencyObject d, DependencyPropertyChangedEventArgs e )
+        private static void OnChangeThatNeedsRearrangement( DependencyObject d, DependencyPropertyChangedEventArgs e )
         {
             if( d is SearchBox searchBox )
             {
-                searchBox.ArrangeClearButton();
+                searchBox.Arrange();
             }
         }
 
-        private void ArrangeClearButton()
+        private void Arrange()
         {
+            double toggleButtonWidth;
+
+            if( m_comboBox is SearchComboBox searchComboBox )
+            {
+                toggleButtonWidth = searchComboBox.ToggleButtonWidth;
+            }
+            else
+            {
+                toggleButtonWidth = SystemParameters.VerticalScrollBarWidth;
+            }
+
             if( m_clearButton != null )
             {
-                double toggleButtonWidth;
-
-                if( m_comboBox is SearchComboBox searchComboBox )
-                {
-                    toggleButtonWidth = searchComboBox.ToggleButtonWidth;
-                }
-                else
-                {
-                    toggleButtonWidth = SystemParameters.VerticalScrollBarWidth;
-                }
-
                 var clearButtonRightMargin = toggleButtonWidth + BorderThickness.Right;
 
-                var comboBoxPaddingOffset = m_clearButton.ActualWidth;
+                var clearButtonWidth = m_clearButton.ActualWidth;
 
                 if( ClearButtonPosition == EHorizontalPosition.Right )
                 {
-                    ClearButtonMargin = new Thickness( 0, BorderThickness.Top, clearButtonRightMargin, BorderThickness.Bottom );
-                    ComboBoxPadding = new Thickness( Padding.Left, Padding.Top, Padding.Right + comboBoxPaddingOffset, Padding.Bottom );
+                    ClearButtonMargin = new Thickness( BorderThickness.Left, BorderThickness.Top, clearButtonRightMargin, BorderThickness.Bottom );
+                    ComboBoxPadding = new Thickness( Padding.Left, Padding.Top, Padding.Right + clearButtonWidth, Padding.Bottom );
+                    HintMargin = new Thickness( Padding.Left + 1, Padding.Top, Padding.Right + clearButtonWidth + toggleButtonWidth, Padding.Bottom );
                 }
                 else
                 {
-                    ClearButtonMargin = new Thickness( BorderThickness.Left, BorderThickness.Top, 0, BorderThickness.Bottom );
-                    ComboBoxPadding = new Thickness( Padding.Left + comboBoxPaddingOffset, Padding.Top, Padding.Right, Padding.Bottom );
+                    ClearButtonMargin = new Thickness( BorderThickness.Left, BorderThickness.Top, BorderThickness.Right, BorderThickness.Bottom );
+                    ComboBoxPadding = new Thickness( Padding.Left + clearButtonWidth, Padding.Top, Padding.Right, Padding.Bottom );
+                    HintMargin = new Thickness( Padding.Left + clearButtonWidth + 1, Padding.Top, Padding.Right + toggleButtonWidth, Padding.Bottom );
                 }
             }
             else
             {
                 ComboBoxPadding = Padding;
+                HintMargin = new Thickness( Padding.Left, Padding.Top, Padding.Right + toggleButtonWidth, Padding.Bottom );
             }
         }
 

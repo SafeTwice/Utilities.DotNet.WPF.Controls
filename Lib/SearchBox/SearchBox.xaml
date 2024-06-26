@@ -21,6 +21,8 @@
     <SolidColorBrush x:Key="Utilities.DotNet.WPF.SearchBox.ClearButton.Disabled.Foreground" Color="#BFBFBF"/>
     <SolidColorBrush x:Key="Utilities.DotNet.WPF.SearchBox.ClearButton.NoSearch.Foreground" Color="DarkGray"/>
 
+    <SolidColorBrush x:Key="Utilities.DotNet.WPF.SearchBox.Hint.Foreground" Color="DarkGray"/>
+
     <Style x:Key="Utilities.DotNet.WPF.SearchBox.ClearButton"
            TargetType="{x:Type Button}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -90,7 +92,6 @@
                                 SelectedItem="{Binding SelectedItem, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                 SelectedValue="{Binding SelectedValue, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                 SelectedValuePath="{TemplateBinding SelectedValuePath}"
-
                                   
                                 AlternationCount="{TemplateBinding AlternationCount}"
                                 DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
@@ -115,8 +116,7 @@
                                 FontStyle="{TemplateBinding FontStyle}"
                                 Foreground="{TemplateBinding Foreground}"
                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                IsTabStop="{TemplateBinding IsTabStop}"
-                                TabIndex="{TemplateBinding TabIndex}"
+                                IsTabStop="False"
                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
 
                         <Button x:Name="PART_ClearButton"
@@ -133,6 +133,16 @@
                                            HorizontalAlignment="Center"/>
                             </Grid>
                         </Button>
+
+                        <Grid Margin="{TemplateBinding BorderThickness}" IsHitTestVisible="False">
+                            <TextBlock x:Name="hint"
+                                       Text="{TemplateBinding HintText}"
+                                       Foreground="{StaticResource Utilities.DotNet.WPF.SearchBox.Hint.Foreground}"
+                                       Margin="{Binding HintMargin, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Visibility="Hidden"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="SearchText" Value="{x:Null}">
@@ -140,12 +150,17 @@
                             <Setter Property="Text" TargetName="clearButtonContent" Value="&#xF78B;" />
                             <Setter Property="Foreground" TargetName="PART_ClearButton"
                                     Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.NoSearch.Foreground}" />
+                            <Setter Property="Visibility" TargetName="hint" Value="Visible" />
                         </Trigger>
                         <Trigger Property="SearchText" Value="{x:Static sys:String.Empty}">
                             <Setter Property="IsEnabled" TargetName="PART_ClearButton" Value="False" />
                             <Setter Property="Text" TargetName="clearButtonContent" Value="&#xF78B;" />
                             <Setter Property="Foreground" TargetName="PART_ClearButton"
                                     Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.NoSearch.Foreground}" />
+                            <Setter Property="Visibility" TargetName="hint" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter Property="Visibility" TargetName="hint" Value="Hidden" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" TargetName="PART_ClearButton"
