@@ -16,6 +16,8 @@ namespace Utilities.DotNet.WPF.Controls
     /// </summary>
     [TemplatePart( Name = "PART_ComboBox", Type = typeof( ComboBox ) )]
     [TemplatePart( Name = "PART_ClearButton", Type = typeof( Button ) )]
+    [TemplatePart( Name = "PART_FindNextButton", Type = typeof( Button ) )]
+    [TemplatePart( Name = "PART_FindPreviousButton", Type = typeof( Button ) )]
     public class SearchBox : Selector
     {
         //===========================================================================
@@ -55,6 +57,26 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
+        /// Dependency property for the search backwards flag.
+        /// </summary>
+        public static readonly DependencyProperty IsSearchBackwardsProperty =
+            DependencyProperty.Register( nameof( IsSearchBackwards ), typeof( bool ), typeof( SearchBox ),
+                new FrameworkPropertyMetadata( false ) );
+
+        /// <summary>
+        /// Indicates if the search should be done backwards.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( false )]
+        [Description( "Indicates if the search should be done backwards." )]
+        public bool IsSearchBackwards
+        {
+            get => (bool) GetValue( IsSearchBackwardsProperty );
+            set => SetValue( IsSearchBackwardsProperty, value );
+        }
+
+
+        /// <summary>
         /// Dependency property for the trim search text flag.
         /// </summary>
         public static readonly DependencyProperty TrimSearchTextProperty =
@@ -90,6 +112,25 @@ namespace Utilities.DotNet.WPF.Controls
         {
             get => (EHorizontalPosition) GetValue( ClearButtonPositionProperty );
             set => SetValue( ClearButtonPositionProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for the visibility of the find buttons.
+        /// </summary>
+        public static readonly DependencyProperty AreFindButtonsVisibleProperty =
+            DependencyProperty.Register( nameof( AreFindButtonsVisible ), typeof( bool ), typeof( SearchBox ),
+                new FrameworkPropertyMetadata( true ) );
+
+        /// <summary>
+        /// Visibility of the find next buttons.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        [Description( "Visibility of the find next buttons." )]
+        public bool AreFindButtonsVisible
+        {
+            get => (bool) GetValue( AreFindButtonsVisibleProperty );
+            set => SetValue( AreFindButtonsVisibleProperty, value );
         }
 
         /// <summary>
@@ -134,6 +175,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         [Bindable( true )]
         [Browsable( true )]
+        [Description( "Text to display as a hint when the search box is empty." )]
         public string HintText
         {
             get => (string) GetValue( HintTextProperty );
@@ -178,6 +220,29 @@ namespace Utilities.DotNet.WPF.Controls
         {
             get => (ICommand) GetValue( FindCommandProperty );
             set => SetValue( FindCommandProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for the parameter to pass to the Find
+        /// </summary>
+        public static readonly DependencyProperty FindCommandParameterProperty =
+            DependencyProperty.Register( nameof( FindCommandParameter ), typeof( object ), typeof( SearchBox ),
+                new FrameworkPropertyMetadata( null ) );
+
+        /// <summary>
+        /// Parameter to pass to the Find command.
+        /// </summary>
+        /// <remarks>
+        /// If this property has a non-<c>null</c> value, then this property is passed as the parameter to the <see cref="FindCommand"/>;
+        /// otherwise, a <see cref="FindCommandArgs"/> object is passed.
+        /// </remarks>
+        [Bindable( true )]
+        [Browsable( true )]
+        [Description( "Parameter to pass to the Find command." )]
+        public object FindCommandParameter
+        {
+            get => GetValue( FindCommandParameterProperty );
+            set => SetValue( FindCommandParameterProperty, value );
         }
 
         //===========================================================================
@@ -272,29 +337,13 @@ namespace Utilities.DotNet.WPF.Controls
         {
             base.OnApplyTemplate();
 
-            if( m_clearButton != null )
-            {
-                m_clearButton.Click -= ClearButton_OnClick;
-            }
+            PrepareComboBox();
 
-            m_clearButton = GetTemplateChild( "PART_ClearButton" ) as Button;
+            PrepareClearButton();
 
-            if( m_clearButton != null )
-            {
-                m_clearButton.Click += ClearButton_OnClick;
-            }
+            PrepareFindNextButton();
 
-            if( m_comboBox != null )
-            {
-                m_comboBox.KeyDown -= OnKeyDown;
-            }
-
-            m_comboBox = GetTemplateChild( "PART_ComboBox" ) as ComboBox;
-
-            if( m_comboBox != null )
-            {
-                m_comboBox.KeyDown += OnKeyDown;
-            }
+            PrepareFindPreviousButton();
         }
 
         //===========================================================================
@@ -366,6 +415,66 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
+        private void PrepareComboBox()
+        {
+            if( m_comboBox != null )
+            {
+                m_comboBox.KeyDown -= OnKeyDown;
+            }
+
+            m_comboBox = GetTemplateChild( "PART_ComboBox" ) as ComboBox;
+
+            if( m_comboBox != null )
+            {
+                m_comboBox.KeyDown += OnKeyDown;
+            }
+        }
+
+        private void PrepareClearButton()
+        {
+            if( m_clearButton != null )
+            {
+                m_clearButton.Click -= ClearButton_OnClick;
+            }
+
+            m_clearButton = GetTemplateChild( "PART_ClearButton" ) as Button;
+
+            if( m_clearButton != null )
+            {
+                m_clearButton.Click += ClearButton_OnClick;
+            }
+        }
+
+        private void PrepareFindNextButton()
+        {
+            if( m_findNextButton != null )
+            {
+                m_findNextButton.Click -= FindNextButton_OnClick;
+            }
+
+            m_findNextButton = GetTemplateChild( "PART_FindNextButton" ) as Button;
+
+            if( m_findNextButton != null )
+            {
+                m_findNextButton.Click += FindNextButton_OnClick;
+            }
+        }
+
+        private void PrepareFindPreviousButton()
+        {
+            if( m_findPreviousButton != null )
+            {
+                m_findPreviousButton.Click -= FindPreviousButton_OnClick;
+            }
+
+            m_findPreviousButton = GetTemplateChild( "PART_FindPreviousButton" ) as Button;
+
+            if( m_findPreviousButton != null )
+            {
+                m_findPreviousButton.Click += FindPreviousButton_OnClick;
+            }
+        }
+
         private static void OnAutoHistorySizeChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
         {
             ( d as SearchBox )?.OnAutoHistorySizeChanged( (int) e.NewValue );
@@ -413,6 +522,20 @@ namespace Utilities.DotNet.WPF.Controls
             SearchText = string.Empty;
         }
 
+        private void FindNextButton_OnClick( object sender, RoutedEventArgs e )
+        {
+            IsSearchBackwards = false;
+
+            OnFind();
+        }
+
+        private void FindPreviousButton_OnClick( object sender, RoutedEventArgs e )
+        {
+            IsSearchBackwards = true;
+
+            OnFind();
+        }
+
         private void OnKeyDown( object sender, KeyEventArgs e )
         {
             if( e.Key == Key.Enter )
@@ -440,12 +563,22 @@ namespace Utilities.DotNet.WPF.Controls
 
             UpdateSearchHistory( searchText );
 
-            var newEvent = new FindEventArgs( FindEvent, this, searchText );
+            if( !AreFindButtonsVisible )
+            {
+                IsSearchBackwards = false;
+            }
+
+            var newEvent = new FindEventArgs( FindEvent, this, searchText, IsSearchBackwards );
             RaiseEvent( newEvent );
 
-            if( FindCommand?.CanExecute( searchText ) ?? false )
+            if( FindCommand != null )
             {
-                FindCommand.Execute( searchText );
+                var parameter = FindCommandParameter ?? new FindCommandArgs( searchText, IsSearchBackwards );
+
+                if( FindCommand.CanExecute( parameter ) )
+                {
+                    FindCommand.Execute( parameter );
+                }
             }
         }
 
@@ -488,8 +621,10 @@ namespace Utilities.DotNet.WPF.Controls
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private Button? m_clearButton;
         private ComboBox? m_comboBox;
+        private Button? m_clearButton;
+        private Button? m_findNextButton;
+        private Button? m_findPreviousButton;
 
         private ObservableCollection<string>? m_searchHistory;
     }

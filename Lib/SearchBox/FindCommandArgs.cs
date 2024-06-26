@@ -7,16 +7,9 @@ using System.Windows;
 namespace Utilities.DotNet.WPF.Controls
 {
     /// <summary>
-    /// Delegate for the Find event.
+    /// Contains event data for the Find command.
     /// </summary>
-    /// <param name="sender">The object where the event handler is attached.</param>
-    /// <param name="e">The event data.</param>
-    public delegate void FindEventHandler( object sender, FindEventArgs e );
-
-    /// <summary>
-    /// Contains event data for the Find event.
-    /// </summary>
-    public class FindEventArgs : RoutedEventArgs
+    public class FindCommandArgs
     {
         //===========================================================================
         //                           PUBLIC PROPERTIES
@@ -39,12 +32,9 @@ namespace Utilities.DotNet.WPF.Controls
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="routedEvent">The routed event identifier for this instance.</param>
-        /// <param name="source">An alternate source that will be reported when the event is handled.
-        ///                      This pre-populates the <see cref="RoutedEventArgs.Source">Source</see> property.</param>
         /// <param name="text">Text to find.</param>
         /// <param name="searchBackwards">Indicates if the search should be done backwards.</param>
-        public FindEventArgs( RoutedEvent routedEvent, object source, string text, bool searchBackwards ) : base( routedEvent, source )
+        public FindCommandArgs( string text, bool searchBackwards )
         {
             Text = text;
             SearchBackwards = searchBackwards;
