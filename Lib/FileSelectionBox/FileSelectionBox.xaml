@@ -1,15 +1,47 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Utilities.DotNet.WPF.Controls">
-    <Style TargetType="{x:Type local:FileSelectionBox}">
+    <Style TargetType="{x:Type local:FileSelectionBox}"
+           BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="1"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:FileSelectionBox">
                     <Grid>
-                        <TextBox x:Name="FilenameTextBox" Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 VerticalContentAlignment="Center" Padding="1,1,32,1"/>
-                        <Button x:Name="FileDialogButton" Content="..." Width="30" HorizontalAlignment="Right" Margin="1" VerticalContentAlignment="Center"/>
+                        <TextBox x:Name="PART_FilenameTextBox"
+                                 Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 
+                                 Padding="{Binding TextBoxPadding, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                                 
+                                 TextAlignment="{TemplateBinding TextAlignment}"
+                                 TextDecorations="{TemplateBinding TextDecorations}"
+                                 
+                                 CaretBrush="{TemplateBinding CaretBrush}"
+                                 IsInactiveSelectionHighlightEnabled="{TemplateBinding IsInactiveSelectionHighlightEnabled}"
+                                 SelectionBrush="{TemplateBinding SelectionBrush}"
+                                 SelectionOpacity="{TemplateBinding SelectionOpacity}"
+                                 SelectionTextBrush="{TemplateBinding SelectionTextBrush}"
+
+                                 Background="{TemplateBinding Background}"
+                                 Foreground="{TemplateBinding Foreground}"
+                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                 IsTabStop="False"
+                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                        <Button x:Name="PART_FileDialogButton"
+                                Content="..."
+                                MinWidth="25"
+                                Margin="{Binding ButtonMargin, RelativeSource={RelativeSource TemplatedParent}}"
+                                IsTabStop="False"
+                                HorizontalAlignment="Right"
+                                VerticalContentAlignment="Center"/>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ButtonPosition" Value="Left">
+                            <Setter Property="HorizontalAlignment" Value="Left" TargetName="PART_FileDialogButton"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
