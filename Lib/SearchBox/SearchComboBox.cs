@@ -16,23 +16,57 @@ namespace Utilities.DotNet.WPF.Controls
         //                           PUBLIC PROPERTIES
         //===========================================================================
 
-        public double ToggleButtonWidth
+        public Thickness ActiveZoneMargin
         {
             get
             {
-                double width = 0.0;
+                double leftMargin = 0.0;
+                double rightMargin = 0.0;
+                double topMargin = 0.0;
+                double bottomMargin = 0.0;
 
-                if( m_toggleButton != null )
+                if( m_textBox != null )
                 {
-                    width = m_toggleButton.ActualWidth - ( m_toggleButton.BorderThickness.Left + m_toggleButton.BorderThickness.Right );
+                    // Force layout update
+                    UpdateLayout();
+
+                    var relativeLocation = m_textBox.TranslatePoint( new( 0, 0 ), this );
+
+                    leftMargin = relativeLocation.X - m_textBox.Margin.Left;
+
+                    var rightLocation = relativeLocation.X + m_textBox.ActualWidth + m_textBox.Margin.Right;
+                    rightMargin = ActualWidth - rightLocation;
+
+                    topMargin = relativeLocation.Y - m_textBox.Margin.Top;
+                    
+                    var bottomLocation = relativeLocation.Y + m_textBox.ActualHeight + m_textBox.Margin.Bottom;
+                    bottomMargin = ActualHeight - bottomLocation;
+
+                    if( ( ( topMargin - BorderThickness.Top ) < 2.0 ) &&
+                        ( ( bottomMargin - BorderThickness.Bottom ) < 2.0 ) )
+                    {
+                        rightMargin -= 1.0; // Correction except with the Classic theme
+                    }
                 }
 
-                if( width <= 0 )
+                if( leftMargin <= 0 )
                 {
-                    width = SystemParameters.VerticalScrollBarWidth;
+                    leftMargin = BorderThickness.Left;
+                }
+                if( rightMargin <= 0 )
+                {
+                    rightMargin = SystemParameters.VerticalScrollBarWidth + BorderThickness.Right;
+                }
+                if( topMargin <= 0 )
+                {
+                    topMargin = BorderThickness.Top;
+                }
+                if( bottomMargin <= 0 )
+                {
+                    bottomMargin = BorderThickness.Bottom;
                 }
 
-                return width;
+                return new Thickness( leftMargin, topMargin, rightMargin, bottomMargin );
             }
         }
 
@@ -45,13 +79,13 @@ namespace Utilities.DotNet.WPF.Controls
         {
             base.OnApplyTemplate();
 
-            m_toggleButton = GetTemplateChild( "toggleButton" ) as Button;
+            m_textBox = GetTemplateChild( "PART_EditableTextBox" ) as Control;
         }
 
         //===========================================================================
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private Button? m_toggleButton;
+        private Control? m_textBox;
     }
 }

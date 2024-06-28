@@ -79,7 +79,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Inactive.Foreground}" />
         <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
-        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontSize" Value="11" />
         <Setter Property="Padding" Value="2,0" />
         <Setter Property="Template">
             <Setter.Value>
@@ -105,6 +105,10 @@
                             <Setter Property="Foreground"
                                     Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Active.Foreground}" />
                         </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Disabled.Foreground}" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -114,7 +118,6 @@
     <Style TargetType="{x:Type local:SearchBox}">
         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="1" />
         <Setter Property="Template">
             <Setter.Value>
@@ -140,6 +143,7 @@
                         <Grid>
                             <local:SearchComboBox
                                     x:Name="PART_ComboBox"
+                                    Style="{DynamicResource {x:Type ComboBox}}"
                                     Text="{Binding SearchText, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                     IsReadOnly="False"
                                     IsEditable="True"
@@ -167,12 +171,6 @@
                                     ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
 
                                     Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    FontFamily="{TemplateBinding FontFamily}"
-                                    FontSize="{TemplateBinding FontSize}"
-                                    FontStretch="{TemplateBinding FontStretch}"
-                                    FontStyle="{TemplateBinding FontStyle}"
                                     Foreground="{TemplateBinding Foreground}"
                                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     IsTabStop="False"
@@ -180,7 +178,7 @@
 
                             <Button x:Name="PART_ClearButton"
                                     Style="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton}"
-                                    Margin="{Binding ClearButtonMargin, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Margin="{Binding ActiveZoneMargin, RelativeSource={RelativeSource TemplatedParent}}"
                                     FontFamily="Segoe MDL2 Assets"
                                     FontSize="10"
                                     HorizontalAlignment="Right">
@@ -193,14 +191,18 @@
                                 </Grid>
                             </Button>
 
-                            <Grid Margin="{TemplateBinding BorderThickness}" IsHitTestVisible="False">
-                                <TextBlock x:Name="hint"
-                                           Text="{TemplateBinding HintText}"
-                                           Foreground="{StaticResource Utilities.DotNet.WPF.SearchBox.Hint.Foreground}"
-                                           Margin="{Binding HintMargin, RelativeSource={RelativeSource TemplatedParent}}"
-                                           Visibility="Hidden"
-                                           HorizontalAlignment="Left"
-                                           VerticalAlignment="Center"/>
+                            <Grid Margin="{Binding ActiveZoneMargin, RelativeSource={RelativeSource TemplatedParent}}"
+                                  IsHitTestVisible="False">
+                                <!-- Adjust hint left margin for better alignment with ComboBox text -->
+                                <Grid Margin="2,0,0,0">
+                                    <TextBlock x:Name="hint"
+                                               Text="{TemplateBinding HintText}"
+                                               Foreground="{StaticResource Utilities.DotNet.WPF.SearchBox.Hint.Foreground}"
+                                               Margin="{Binding ComboBoxPadding, RelativeSource={RelativeSource TemplatedParent}}"
+                                               Visibility="Hidden"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </DockPanel>

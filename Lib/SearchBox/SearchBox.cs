@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Utilities.DotNet.WPF.Controls
 {
@@ -185,6 +186,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// <summary>
         /// Dependency property for the maximum height of the drop-down popup.
         /// </summary>
+        [TypeConverter( typeof( LengthConverter ) )]
         public static readonly DependencyProperty MaxDropDownHeightProperty =
             DependencyProperty.Register( nameof( MaxDropDownHeight ), typeof( double ), typeof( SearchBox ),
                 new FrameworkPropertyMetadata( SystemParameters.PrimaryScreenHeight / 3 ) );
@@ -193,9 +195,9 @@ namespace Utilities.DotNet.WPF.Controls
         /// Maximum height of the drop-down popup.
         /// </summary>
         [Bindable( true )]
-        [Category( "Layout" )]
         [Browsable( true )]
         [TypeConverter( typeof( LengthConverter ) )]
+        [Category( "Layout" )]
         [Description( "The maximum height of the drop-down popup." )]
         public double MaxDropDownHeight
         {
@@ -249,40 +251,28 @@ namespace Utilities.DotNet.WPF.Controls
         //                          INTERNAL PROPERTIES
         //===========================================================================
 
+        private static readonly DependencyPropertyKey ActiveZoneMarginPropertyKey =
+            DependencyProperty.RegisterReadOnly( nameof( ActiveZoneMargin ), typeof( Thickness ), typeof( SearchBox ),
+                new FrameworkPropertyMetadata( new Thickness() ) );
+
+        [Bindable( false )]
+        [Browsable( false )]
+        internal Thickness ActiveZoneMargin
+        {
+            get => (Thickness) GetValue( ActiveZoneMarginPropertyKey.DependencyProperty );
+            private set => SetValue( ActiveZoneMarginPropertyKey, value );
+        }
+
         private static readonly DependencyPropertyKey ComboBoxPaddingPropertyKey =
             DependencyProperty.RegisterReadOnly( nameof( ComboBoxPadding ), typeof( Thickness ), typeof( SearchBox ),
                 new FrameworkPropertyMetadata( new Thickness() ) );
 
-        [Bindable( true )]
+        [Bindable( false )]
         [Browsable( false )]
         internal Thickness ComboBoxPadding
         {
             get => (Thickness) GetValue( ComboBoxPaddingPropertyKey.DependencyProperty );
             private set => SetValue( ComboBoxPaddingPropertyKey, value );
-        }
-
-        private static readonly DependencyPropertyKey ClearButtonMarginPropertyKey =
-            DependencyProperty.RegisterReadOnly( nameof( ClearButtonMargin ), typeof( Thickness ), typeof( SearchBox ),
-                new FrameworkPropertyMetadata( new Thickness() ) );
-
-        [Bindable( true )]
-        [Browsable( false )]
-        internal Thickness ClearButtonMargin
-        {
-            get => (Thickness) GetValue( ClearButtonMarginPropertyKey.DependencyProperty );
-            private set => SetValue( ClearButtonMarginPropertyKey, value );
-        }
-
-        private static readonly DependencyPropertyKey HintMarginPropertyKey =
-            DependencyProperty.RegisterReadOnly( nameof( HintMargin ), typeof( Thickness ), typeof( SearchBox ),
-                new FrameworkPropertyMetadata( new Thickness() ) );
-
-        [Bindable( true )]
-        [Browsable( false )]
-        internal Thickness HintMargin
-        {
-            get => (Thickness) GetValue( HintMarginPropertyKey.DependencyProperty );
-            private set => SetValue( HintMarginPropertyKey, value );
         }
 
         //===========================================================================
@@ -315,9 +305,14 @@ namespace Utilities.DotNet.WPF.Controls
 
             ItemsSourceProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( null, null, CoerceItemsSource ) );
 
-            BorderThicknessProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnChangeThatNeedsRearrangement ) );
-
             PaddingProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnChangeThatNeedsRearrangement ) );
+
+            // BorderThickness and BorderBrush are not bound to the ComboBox properties in order to use the current theme ComboBox defaults
+            // if the value is not overridden by the user.
+
+            BorderThicknessProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnBorderThicknessPropertyChanged ) );
+
+            BorderBrushProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnBorderBrushPropertyChanged ) );
         }
 
         /// <summary>
@@ -376,42 +371,72 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
+        private static void OnBorderBrushPropertyChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+        {
+            if( d is SearchBox searchBox )
+            {
+                searchBox.OnBorderBrushChanged( (Brush) e.NewValue );
+            }
+        }
+
+        private void OnBorderBrushChanged( Brush newValue )
+        {
+            if( m_comboBox != null )
+            {
+                m_comboBox.BorderBrush = newValue;
+            }
+        }
+
+        private static void OnBorderThicknessPropertyChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+        {
+            if( d is SearchBox searchBox )
+            {
+                searchBox.OnBorderThicknessChanged( (Thickness) e.NewValue );
+                searchBox.Arrange();
+            }
+        }
+
+        private void OnBorderThicknessChanged( Thickness newValue )
+        {
+            if( m_comboBox != null )
+            {
+                m_comboBox.BorderThickness = newValue;
+            }
+        }
+
         private void Arrange()
         {
-            double toggleButtonWidth;
+            if( !IsLoaded )
+            {
+                return;
+            }
 
             if( m_comboBox is SearchComboBox searchComboBox )
             {
-                toggleButtonWidth = searchComboBox.ToggleButtonWidth;
+                ActiveZoneMargin = searchComboBox.ActiveZoneMargin;
             }
             else
             {
-                toggleButtonWidth = SystemParameters.VerticalScrollBarWidth;
+                ActiveZoneMargin = new Thickness( BorderThickness.Left, BorderThickness.Top, BorderThickness.Right + SystemParameters.VerticalScrollBarWidth,
+                                                  BorderThickness.Bottom );
             }
 
             if( m_clearButton != null )
             {
-                var clearButtonRightMargin = toggleButtonWidth + BorderThickness.Right;
-
                 var clearButtonWidth = m_clearButton.ActualWidth;
 
                 if( ClearButtonPosition == EHorizontalPosition.Right )
                 {
-                    ClearButtonMargin = new Thickness( BorderThickness.Left, BorderThickness.Top, clearButtonRightMargin, BorderThickness.Bottom );
                     ComboBoxPadding = new Thickness( Padding.Left, Padding.Top, Padding.Right + clearButtonWidth, Padding.Bottom );
-                    HintMargin = new Thickness( Padding.Left + 1, Padding.Top, Padding.Right + clearButtonWidth + toggleButtonWidth, Padding.Bottom );
                 }
                 else
                 {
-                    ClearButtonMargin = new Thickness( BorderThickness.Left, BorderThickness.Top, BorderThickness.Right, BorderThickness.Bottom );
                     ComboBoxPadding = new Thickness( Padding.Left + clearButtonWidth, Padding.Top, Padding.Right, Padding.Bottom );
-                    HintMargin = new Thickness( Padding.Left + clearButtonWidth + 1, Padding.Top, Padding.Right + toggleButtonWidth, Padding.Bottom );
                 }
             }
             else
             {
                 ComboBoxPadding = Padding;
-                HintMargin = new Thickness( Padding.Left, Padding.Top, Padding.Right + toggleButtonWidth, Padding.Bottom );
             }
         }
 
@@ -427,6 +452,24 @@ namespace Utilities.DotNet.WPF.Controls
             if( m_comboBox != null )
             {
                 m_comboBox.KeyDown += OnKeyDown;
+
+                // Transfer non-bound properties to the ComboBox when it is available.
+                TransferComboBoxProperties();
+            }
+        }
+
+        private void TransferComboBoxProperties()
+        {
+            var borderThickness = ReadLocalValue( BorderThicknessProperty );
+            if( borderThickness != DependencyProperty.UnsetValue )
+            {
+                OnBorderThicknessChanged( (Thickness) borderThickness );
+            }
+
+            var borderBrush = ReadLocalValue( BorderBrushProperty );
+            if( borderBrush != DependencyProperty.UnsetValue )
+            {
+                OnBorderBrushChanged( (Brush) borderBrush );
             }
         }
 
