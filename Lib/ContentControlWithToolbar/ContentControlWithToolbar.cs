@@ -40,6 +40,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// <summary>
         /// Dependency property for <see cref="HeaderMargin"/>.
         /// </summary>
+        [TypeConverter( typeof( ThicknessConverter ) )]
         public static readonly DependencyProperty HeaderMarginProperty =
             DependencyProperty.Register( nameof( HeaderMargin ), typeof( Thickness ), typeof( ContentControlWithToolbar ),
                 new FrameworkPropertyMetadata( new Thickness() ) );
@@ -49,6 +50,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         [Bindable( true )]
         [Browsable( true )]
+        [TypeConverter( typeof( ThicknessConverter ) )]
         [Description( "Margin around the toolbar." )]
         public Thickness HeaderMargin
         {
@@ -59,6 +61,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// <summary>
         /// Dependency property for <see cref="HeaderMinWidth"/>.
         /// </summary>
+        [TypeConverter( typeof( LengthConverter ) )]
         public static readonly DependencyProperty HeaderMinWidthProperty =
             DependencyProperty.Register( nameof( HeaderMinWidth ), typeof( double ), typeof( ContentControlWithToolbar ),
                 new FrameworkPropertyMetadata( 0.0 ) );

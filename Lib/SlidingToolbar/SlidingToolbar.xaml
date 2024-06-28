@@ -39,9 +39,10 @@
                             <DockPanel Margin="12,5,0,5">
                                 <Button DockPanel.Dock="Right"
                                         x:Name="PART_CloseButton"
+                                        FontSize="10"
                                         Content="❌"
                                         Style="{StaticResource FlatButton}"
-                                        Margin="3">
+                                        Margin="3,3,5,3">
                                 </Button>
                                 <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
