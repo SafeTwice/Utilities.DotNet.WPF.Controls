@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using Utilities.DotNet.WPF.Common;
 
 namespace Utilities.DotNet.WPF.Controls
 {
@@ -39,7 +40,7 @@ namespace Utilities.DotNet.WPF.Controls
         //===========================================================================
 
         /// <summary>
-        /// Dependency property for the search text.
+        /// Dependency property for <see cref="SearchText"/>.
         /// </summary>
         public static readonly DependencyProperty SearchTextProperty =
             DependencyProperty.Register( nameof( SearchText ), typeof( string ), typeof( SearchBox ),
@@ -58,7 +59,7 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the search backwards flag.
+        /// Dependency property for <see cref="IsSearchBackwards"/>.
         /// </summary>
         public static readonly DependencyProperty IsSearchBackwardsProperty =
             DependencyProperty.Register( nameof( IsSearchBackwards ), typeof( bool ), typeof( SearchBox ),
@@ -78,7 +79,7 @@ namespace Utilities.DotNet.WPF.Controls
 
 
         /// <summary>
-        /// Dependency property for the trim search text flag.
+        /// Dependency property for <see cref="TrimSearchText"/>.
         /// </summary>
         public static readonly DependencyProperty TrimSearchTextProperty =
             DependencyProperty.Register( nameof( TrimSearchText ), typeof( bool ), typeof( SearchBox ),
@@ -97,7 +98,7 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the search button position.
+        /// Dependency property for <see cref="ClearButtonPosition"/>.
         /// </summary>
         public static readonly DependencyProperty ClearButtonPositionProperty =
             DependencyProperty.Register( nameof( ClearButtonPosition ), typeof( EHorizontalPosition ), typeof( SearchBox ),
@@ -116,7 +117,7 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the visibility of the find buttons.
+        /// Dependency property for <see cref="AreFindButtonsVisible"/>.
         /// </summary>
         public static readonly DependencyProperty AreFindButtonsVisibleProperty =
             DependencyProperty.Register( nameof( AreFindButtonsVisible ), typeof( bool ), typeof( SearchBox ),
@@ -135,7 +136,7 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the auto history size.
+        /// Dependency property for <see cref="AutoHistorySize"/>.
         /// </summary>
         public static readonly DependencyProperty AutoHistorySizeProperty =
             DependencyProperty.Register( nameof( AutoHistorySize ), typeof( int ), typeof( SearchBox ),
@@ -165,7 +166,7 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the hint text.
+        /// Dependency property for <see cref="HintText"/>.
         /// </summary>
         public static readonly DependencyProperty HintTextProperty =
             DependencyProperty.Register( nameof( HintText ), typeof( string ), typeof( SearchBox ),
@@ -184,7 +185,7 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the maximum height of the drop-down popup.
+        /// Dependency property for <see cref="MaxDropDownHeight"/>.
         /// </summary>
         [TypeConverter( typeof( LengthConverter ) )]
         public static readonly DependencyProperty MaxDropDownHeightProperty =
@@ -206,7 +207,7 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the Find command.
+        /// Dependency property for <see cref="FindCommand"/>.
         /// </summary>
         public static readonly DependencyProperty FindCommandProperty =
             DependencyProperty.Register( nameof( FindCommand ), typeof( ICommand ), typeof( SearchBox ),
@@ -225,7 +226,7 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the parameter to pass to the Find
+        /// Dependency property for <see cref="FindCommandParameter"/>.
         /// </summary>
         public static readonly DependencyProperty FindCommandParameterProperty =
             DependencyProperty.Register( nameof( FindCommandParameter ), typeof( object ), typeof( SearchBox ),
@@ -245,6 +246,44 @@ namespace Utilities.DotNet.WPF.Controls
         {
             get => GetValue( FindCommandParameterProperty );
             set => SetValue( FindCommandParameterProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for <see cref="FindNext"/>.
+        /// </summary>
+        public static readonly DependencyProperty FindNextProperty =
+            DependencyProperty.Register( nameof( FindNext ), typeof( DelegateTrigger ), typeof( SearchBox ),
+                new FrameworkPropertyMetadata( null, OnFindNextPropertyChanged ) );
+
+        /// <summary>
+        /// Trigger to find the next occurrence.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        [Description( "Trigger to find the next occurrence." )]
+        public DelegateTrigger FindNext
+        {
+            get => (DelegateTrigger) GetValue( FindNextProperty );
+            set => SetValue( FindNextProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for <see cref="FindPrevious"/>.
+        /// </summary>
+        public static readonly DependencyProperty FindPreviousProperty =
+            DependencyProperty.Register( nameof( FindPrevious ), typeof( DelegateTrigger ), typeof( SearchBox ),
+                new FrameworkPropertyMetadata( null, OnFindPreviousPropertyChanged ) );
+
+        /// <summary>
+        /// Trigger to find the previous occurrence.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        [Description( "Trigger to find the previous occurrence." )]
+        public DelegateTrigger FindPrevious
+        {
+            get => (DelegateTrigger) GetValue( FindPreviousProperty );
+            set => SetValue( FindPreviousProperty, value );
         }
 
         //===========================================================================
@@ -551,16 +590,12 @@ namespace Utilities.DotNet.WPF.Controls
 
         private void FindNextButton_OnClick( object sender, RoutedEventArgs e )
         {
-            IsSearchBackwards = false;
-
-            OnFind();
+            OnFindNext();
         }
 
         private void FindPreviousButton_OnClick( object sender, RoutedEventArgs e )
         {
-            IsSearchBackwards = true;
-
-            OnFind();
+            OnFindPrevious();
         }
 
         private void OnKeyDown( object sender, KeyEventArgs e )
@@ -569,6 +604,20 @@ namespace Utilities.DotNet.WPF.Controls
             {
                 OnFind();
             }
+        }
+
+        private void OnFindNext()
+        {
+            IsSearchBackwards = false;
+
+            OnFind();
+        }
+
+        private void OnFindPrevious()
+        {
+            IsSearchBackwards = true;
+
+            OnFind();
         }
 
         private void OnFind()
@@ -641,6 +690,38 @@ namespace Utilities.DotNet.WPF.Controls
             while( m_searchHistory.Count > AutoHistorySize )
             {
                 m_searchHistory.RemoveAt( m_searchHistory.Count - 1 );
+            }
+        }
+
+        private static void OnFindNextPropertyChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+        {
+            if( d is SearchBox searchBox )
+            {
+                if( e.OldValue is DelegateTrigger oldTrigger )
+                {
+                    oldTrigger.Activated -= searchBox.OnFindNext;
+                }
+
+                if( e.NewValue is DelegateTrigger newTrigger )
+                {
+                    newTrigger.Activated += searchBox.OnFindNext;
+                }
+            }
+        }
+
+        private static void OnFindPreviousPropertyChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+        {
+            if( d is SearchBox searchBox )
+            {
+                if( e.OldValue is DelegateTrigger oldTrigger )
+                {
+                    oldTrigger.Activated -= searchBox.OnFindPrevious;
+                }
+
+                if( e.NewValue is DelegateTrigger newTrigger )
+                {
+                    newTrigger.Activated += searchBox.OnFindPrevious;
+                }
             }
         }
 

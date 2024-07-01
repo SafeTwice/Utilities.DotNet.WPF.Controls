@@ -5,7 +5,9 @@ VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.DotNet.WPF.Controls", "Lib\Utilities.DotNet.WPF.Controls.csproj", "{6A36F6AF-6CE4-4B17-A6B9-3F4C202AD1EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.DotNet.WPF.Controls.Demo", "Demo\Utilities.DotNet.WPF.Controls.Demo.csproj", "{AC771BE8-87A6-4349-997C-D5D72CEB15E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.DotNet.WPF.Controls.Demo", "Demo\Utilities.DotNet.WPF.Controls.Demo.csproj", "{AC771BE8-87A6-4349-997C-D5D72CEB15E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.DotNet.WPF", "..\Utilities.DotNet.WPF\Lib\Utilities.DotNet.WPF.csproj", "{829DAF3B-4E43-4C7F-A97C-D2D44FC856CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{AC771BE8-87A6-4349-997C-D5D72CEB15E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC771BE8-87A6-4349-997C-D5D72CEB15E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC771BE8-87A6-4349-997C-D5D72CEB15E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{829DAF3B-4E43-4C7F-A97C-D2D44FC856CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{829DAF3B-4E43-4C7F-A97C-D2D44FC856CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{829DAF3B-4E43-4C7F-A97C-D2D44FC856CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{829DAF3B-4E43-4C7F-A97C-D2D44FC856CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
