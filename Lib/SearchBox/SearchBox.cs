@@ -101,7 +101,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public static readonly DependencyProperty ClearButtonPositionProperty =
             DependencyProperty.Register( nameof( ClearButtonPosition ), typeof( EHorizontalPosition ), typeof( SearchBox ),
-                new FrameworkPropertyMetadata( EHorizontalPosition.Right, OnChangeThatNeedsRearrangement ) );
+                new FrameworkPropertyMetadata( EHorizontalPosition.Right, FrameworkPropertyMetadataOptions.AffectsArrange ) );
 
         /// <summary>
         /// Position of the clear button.
@@ -305,22 +305,16 @@ namespace Utilities.DotNet.WPF.Controls
 
             ItemsSourceProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( null, null, CoerceItemsSource ) );
 
-            PaddingProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnChangeThatNeedsRearrangement ) );
+            PaddingProperty.OverrideMetadata( typeof( SearchBox ),
+                new FrameworkPropertyMetadata( new Thickness(), FrameworkPropertyMetadataOptions.AffectsArrange ) );
 
             // BorderThickness and BorderBrush are not bound to the ComboBox properties in order to use the current theme ComboBox defaults
             // if the value is not overridden by the user.
 
-            BorderThicknessProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnBorderThicknessPropertyChanged ) );
+            BorderThicknessProperty.OverrideMetadata( typeof( SearchBox ),
+                new FrameworkPropertyMetadata( new Thickness(), FrameworkPropertyMetadataOptions.AffectsArrange, OnBorderThicknessPropertyChanged ) );
 
             BorderBrushProperty.OverrideMetadata( typeof( SearchBox ), new FrameworkPropertyMetadata( OnBorderBrushPropertyChanged ) );
-        }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public SearchBox()
-        {
-            Loaded += OnLoaded;
         }
 
         //===========================================================================
@@ -354,63 +348,21 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
+        protected override Size ArrangeOverride( Size finalSize )
+        {
+            var result = base.ArrangeOverride( finalSize );
+
+            Arrange();
+
+            return result;
+        }
+
         //===========================================================================
         //                            PRIVATE METHODS
         //===========================================================================
 
-        private void OnLoaded( object sender, RoutedEventArgs e )
-        {
-            Arrange();
-        }
-
-        private static void OnChangeThatNeedsRearrangement( DependencyObject d, DependencyPropertyChangedEventArgs e )
-        {
-            if( d is SearchBox searchBox )
-            {
-                searchBox.Arrange();
-            }
-        }
-
-        private static void OnBorderBrushPropertyChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
-        {
-            if( d is SearchBox searchBox )
-            {
-                searchBox.OnBorderBrushChanged( (Brush) e.NewValue );
-            }
-        }
-
-        private void OnBorderBrushChanged( Brush newValue )
-        {
-            if( m_comboBox != null )
-            {
-                m_comboBox.BorderBrush = newValue;
-            }
-        }
-
-        private static void OnBorderThicknessPropertyChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
-        {
-            if( d is SearchBox searchBox )
-            {
-                searchBox.OnBorderThicknessChanged( (Thickness) e.NewValue );
-                searchBox.Arrange();
-            }
-        }
-
-        private void OnBorderThicknessChanged( Thickness newValue )
-        {
-            if( m_comboBox != null )
-            {
-                m_comboBox.BorderThickness = newValue;
-            }
-        }
-
         private void Arrange()
         {
-            if( !IsLoaded )
-            {
-                return;
-            }
-
             if( m_comboBox is SearchComboBox searchComboBox )
             {
                 ActiveZoneMargin = searchComboBox.ActiveZoneMargin;
@@ -437,6 +389,38 @@ namespace Utilities.DotNet.WPF.Controls
             else
             {
                 ComboBoxPadding = Padding;
+            }
+        }
+
+        private static void OnBorderBrushPropertyChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+        {
+            if( d is SearchBox searchBox )
+            {
+                searchBox.OnBorderBrushChanged( (Brush) e.NewValue );
+            }
+        }
+
+        private void OnBorderBrushChanged( Brush newValue )
+        {
+            if( m_comboBox != null )
+            {
+                m_comboBox.BorderBrush = newValue;
+            }
+        }
+
+        private static void OnBorderThicknessPropertyChanged( DependencyObject d, DependencyPropertyChangedEventArgs e )
+        {
+            if( d is SearchBox searchBox )
+            {
+                searchBox.OnBorderThicknessChanged( (Thickness) e.NewValue );
+            }
+        }
+
+        private void OnBorderThicknessChanged( Thickness newValue )
+        {
+            if( m_comboBox != null )
+            {
+                m_comboBox.BorderThickness = newValue;
             }
         }
 
