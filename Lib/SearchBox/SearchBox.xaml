@@ -4,6 +4,10 @@
                     xmlns:local="clr-namespace:Utilities.DotNet.WPF.Controls"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Utilities.DotNet.WPF.Controls;component/Common.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <SolidColorBrush x:Key="Utilities.DotNet.WPF.SearchBox.ClearButton.MouseOver.BorderBrush" Color="#7EB4EA"/>
     <LinearGradientBrush x:Key="Utilities.DotNet.WPF.SearchBox.ClearButton.MouseOver.Background" EndPoint="0,1" StartPoint="0,0">
         <GradientStop Color="#EBF4FC" Offset="0.0"/>
@@ -16,9 +20,6 @@
         <GradientStop Color="#C4E0FC" Offset="1.0"/>
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="Utilities.DotNet.WPF.SearchBox.ClearButton.Active.Foreground" Color="Black"/>
-    <SolidColorBrush x:Key="Utilities.DotNet.WPF.SearchBox.ClearButton.Inactive.Foreground" Color="#606060"/>
-    <SolidColorBrush x:Key="Utilities.DotNet.WPF.SearchBox.ClearButton.Disabled.Foreground" Color="#BFBFBF"/>
     <SolidColorBrush x:Key="Utilities.DotNet.WPF.SearchBox.ClearButton.NoSearch.Foreground" Color="DarkGray"/>
 
     <SolidColorBrush x:Key="Utilities.DotNet.WPF.SearchBox.Hint.Foreground" Color="DarkGray"/>
@@ -31,7 +32,7 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Inactive.Foreground}" />
+        <Setter Property="Foreground" Value="{StaticResource Utilities.DotNet.WPF.Common.FlatButton.Inactive.Foreground}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ButtonBase}">
@@ -53,7 +54,7 @@
                             <Setter Property="BorderBrush" TargetName="innerBorder"
                                     Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.MouseOver.BorderBrush}" />
                             <Setter Property="Foreground"
-                                    Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Active.Foreground}" />
+                                    Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter Property="Background" TargetName="innerBorder"
@@ -61,7 +62,7 @@
                             <Setter Property="BorderBrush" TargetName="innerBorder"
                                     Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.MouseOver.BorderBrush}" />
                             <Setter Property="Foreground"
-                                    Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Active.Foreground}" />
+                                    Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -70,49 +71,11 @@
     </Style>
 
     <Style x:Key="Utilities.DotNet.WPF.SearchBox.FindButton"
+           BasedOn="{StaticResource Utilities.DotNet.WPF.Common.FlatButton}"
            TargetType="Button">
-        <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="Focusable" Value="False" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Inactive.Foreground}" />
         <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
         <Setter Property="FontSize" Value="11" />
         <Setter Property="Padding" Value="2,0" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ButtonBase}">
-                    <Border BorderThickness="{TemplateBinding BorderThickness}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            Background="{TemplateBinding Background}"
-                            SnapsToDevicePixels="True">
-                        <Border x:Name="innerBorder"
-                                BorderThickness="1"
-                                BorderBrush="Transparent">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              Margin="{TemplateBinding Padding}" />
-                        </Border>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Active.Foreground}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Active.Foreground}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground"
-                                    Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Disabled.Foreground}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <Style TargetType="{x:Type local:SearchBox}">
@@ -228,7 +191,7 @@
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" TargetName="PART_ClearButton"
-                                    Value="{StaticResource Utilities.DotNet.WPF.SearchBox.ClearButton.Disabled.Foreground}" />
+                                    Value="{StaticResource Utilities.DotNet.WPF.Common.FlatButton.Disabled.Foreground}" />
                         </Trigger>
                         <Trigger Property="ClearButtonPosition" Value="Left">
                             <Setter Property="HorizontalAlignment" TargetName="PART_ClearButton" Value="Left" />

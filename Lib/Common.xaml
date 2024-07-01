@@ -2,7 +2,54 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <SolidColorBrush x:Key="Utilities.DotNet.WPF.TextBox.MouseOver.BorderBrush" Color="#7EB4EA"/>
-    <SolidColorBrush x:Key="Utilities.DotNet.WPF.TextBox.KeyboardFocused.BorderBrush" Color="#569DE5"/>
+    <!-- Brush for flat buttons when the button is inactive (enabled but neither pressed nor focused). -->
+    <SolidColorBrush x:Key="Utilities.DotNet.WPF.Common.FlatButton.Inactive.Foreground" Color="#606060"/>
+
+    <!-- Brush for flat buttons when the button is disabled. -->
+    <SolidColorBrush x:Key="Utilities.DotNet.WPF.Common.FlatButton.Disabled.Foreground" Color="#BFBFBF"/>
+
+    <!-- Style for flat buttons. -->
+    <Style x:Key="Utilities.DotNet.WPF.Common.FlatButton"
+           TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource Utilities.DotNet.WPF.Common.FlatButton.Inactive.Foreground}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ButtonBase}">
+                    <Border BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}"
+                            SnapsToDevicePixels="True">
+                        <Border x:Name="innerBorder"
+                                BorderThickness="1"
+                                BorderBrush="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}" />
+                        </Border>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource Utilities.DotNet.WPF.Common.FlatButton.Disabled.Foreground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

@@ -3,20 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Utilities.DotNet.WPF.Controls">
 
-    <Style x:Key="FlatButton" TargetType="Button">
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid Background="{TemplateBinding Background}">
-                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Margin="{TemplateBinding Padding}"/>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Utilities.DotNet.WPF.Controls;component/Common.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type local:SlidingToolbar}">
         <Setter Property="Panel.ZIndex" Value="1000"/>
@@ -39,9 +28,9 @@
                             <DockPanel Margin="12,5,0,5">
                                 <Button DockPanel.Dock="Right"
                                         x:Name="PART_CloseButton"
+                                        Style="{StaticResource Utilities.DotNet.WPF.Common.FlatButton}"
                                         FontSize="10"
                                         Content="❌"
-                                        Style="{StaticResource FlatButton}"
                                         Margin="3,3,5,3">
                                 </Button>
                                 <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"

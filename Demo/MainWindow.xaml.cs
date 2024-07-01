@@ -49,7 +49,7 @@ namespace Utilities.DotNet.WPF.Controls.Demo
             }
         }
 
-        private void SlidingToolbar_ShowCloseButton_Changed( object sender, RoutedEventArgs e )
+        private void SlidingToolbar_IsCloseButtonVisible_Changed( object sender, RoutedEventArgs e )
         {
             SlidingToolbar.Visibility = Visibility.Visible;
         }
