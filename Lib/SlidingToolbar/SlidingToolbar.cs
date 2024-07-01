@@ -38,8 +38,8 @@ namespace Utilities.DotNet.WPF.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata( typeof( SlidingToolbar ), new FrameworkPropertyMetadata( typeof( SlidingToolbar ) ) );
 
-            VisibilityProperty.OverrideMetadata( typeof( SlidingToolbar ), new FrameworkPropertyMetadata( Visibility.Visible, 
-                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault ) );
+            VisibilityProperty.OverrideMetadata( typeof( SlidingToolbar ),
+                new FrameworkPropertyMetadata( Visibility.Visible, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault ) );
         }
 
         //===========================================================================

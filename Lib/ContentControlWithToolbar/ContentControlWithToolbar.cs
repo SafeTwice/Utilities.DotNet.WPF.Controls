@@ -123,7 +123,7 @@ namespace Utilities.DotNet.WPF.Controls
         {
             if( m_toolbar != null )
             {
-                m_toolbar.Visibility = newValue ? Visibility.Visible : Visibility.Collapsed;
+                m_toolbar.Visibility = newValue ? Visibility.Visible : Visibility.Hidden;
             }
         }
 
@@ -131,7 +131,7 @@ namespace Utilities.DotNet.WPF.Controls
         {
             if( sender is SlidingToolbar slidingToolbar )
             {
-                IsHeaderVisible = slidingToolbar.IsVisible;
+                IsHeaderVisible = ( slidingToolbar.Visibility == Visibility.Visible );
             }
         }
 
