@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type local:MainWindow}}"
         KeyDown="Window_OnKeyDown"
-        Title="Utilities.DotNet.WPF.Controls Demo" Height="450" Width="800">
+        Title="Utilities.DotNet.WPF.Controls Demo" Height="450" Width="800" MinHeight="300" MinWidth="400">
     <Window.Resources>
         <Style x:Key="Settings.Label" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -17,7 +17,11 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <TabControl>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TabControl Grid.Row="0">
             
             <TabItem x:Name="ToolbarsTabItem" Header="Toolbars" IsSelected="True">
                 <controls:ContentControlWithToolbar IsHeaderVisible="{Binding IsContentToolbarVisible}" d:IsHeaderVisible="true" Margin="1" HeaderMinWidth="250">
@@ -146,11 +150,41 @@
                     </StackPanel>
                 </Border>
             </TabItem>
+
+            <TabItem Header="DialogBase">
+                <Border BorderThickness="1" BorderBrush="DarkGray" Background="{x:Static SystemColors.WindowBrush}">
+                    <StackPanel Orientation="Vertical" Margin="0,20">
+                        <Button Content="Show Dialog"
+                                Command="{Binding DialogBase_ShowDialogCommand}"
+                                Padding="10,5"
+                                HorizontalAlignment="Center"/>
+                        <DockPanel HorizontalAlignment="Center" Margin="5">
+                            <TextBlock DockPanel.Dock="Left" Text="Dialog Result" Margin="5,5,2,5" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding DialogBase_Result, Mode=OneWay}" IsReadOnly="True" Margin="5" MinWidth="150"/>
+                        </DockPanel>
+                        <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
+                            <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
+
+                                <TextBlock Text="IsOkEnabled" Style="{StaticResource Settings.Label}"/>
+                                <CheckBox IsChecked="{Binding DialogBase_IsOkEnabled}"
+                                          Style="{DynamicResource Settings.CheckBox}"/>
+
+                            </controls:AutoGrid>
+                        </GroupBox>
+                    </StackPanel>
+                </Border>
+
+            </TabItem>
             
         </TabControl>
-        <DockPanel HorizontalAlignment="Right" VerticalAlignment="Top">
-            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="Theme:" Margin="3"/>
-            <ComboBox ItemsSource="{Binding AvailableThemes}" SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}" MinWidth="180"/>
-        </DockPanel>
+
+        <StatusBar Grid.Row="1">
+            <StatusBarItem HorizontalAlignment="Right" Margin="0,0,30,0">
+                <DockPanel Margin="10,5">
+                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="Theme:" Margin="3"/>
+                    <ComboBox ItemsSource="{Binding AvailableThemes}" SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}" MinWidth="180"/>
+                </DockPanel>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

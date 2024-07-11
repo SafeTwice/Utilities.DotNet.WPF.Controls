@@ -1,0 +1,68 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Utilities.DotNet.WPF.Controls">
+
+    <Style TargetType="local:DialogBase">
+        <Setter Property="Foreground"
+                Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:DialogBase">
+                    <Border BorderThickness="{TemplateBinding Border.BorderThickness}"
+                            BorderBrush="{TemplateBinding Border.BorderBrush}"
+                            Background="{TemplateBinding Panel.Background}">
+                        <Grid>
+                            <AdornerDecorator>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <ContentPresenter Grid.Row="0"/>
+                                    <Grid Grid.Row="1"
+                                          Grid.IsSharedSizeScope="True"
+                                          Margin="5,5,15,5"
+                                          HorizontalAlignment="Right">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="DialogButton" MinWidth="100"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="DialogButton"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="PART_OkButton"
+                                                Grid.Column="0" 
+                                                Content="OK"
+                                                Margin="5"
+                                                Padding="20,3"
+                                                IsEnabled="{TemplateBinding IsOkEnabled}"
+                                                IsDefault="True"/>
+                                        <Button Grid.Column="1"
+                                                Content="Cancel"
+                                                Margin="5"
+                                                Padding="20,3"
+                                                IsCancel="True"/>
+                                    </Grid>
+                                </Grid>
+                            </AdornerDecorator>
+                            <ResizeGrip x:Name="resizeGrip"
+                                        IsTabStop="False"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Visibility="Collapsed"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="ResizeMode" Value="{x:Static ResizeMode.CanResizeWithGrip}" />
+                                <Condition Property="WindowState" Value="{x:Static WindowState.Normal}" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Visibility" TargetName="resizeGrip" Value="Visible"/>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+</ResourceDictionary>

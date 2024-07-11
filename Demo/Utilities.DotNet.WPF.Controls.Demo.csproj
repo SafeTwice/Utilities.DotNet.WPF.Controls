@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Utilities.DotNet.WPF\Lib\Utilities.DotNet.WPF.csproj" />
       <ProjectReference Include="..\Lib\Utilities.DotNet.WPF.Controls.csproj" />
     </ItemGroup>
 

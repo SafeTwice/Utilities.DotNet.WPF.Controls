@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
+using Utilities.DotNet.WPF.Commands;
 
 namespace Utilities.DotNet.WPF.Controls.Demo
 {
@@ -27,6 +29,16 @@ namespace Utilities.DotNet.WPF.Controls.Demo
 
         #endregion
 
+        #region DialogBase
+
+        public ICommand DialogBase_ShowDialogCommand { get; } 
+
+        public string DialogBase_Result { get; private set; } = "No result yet...";
+
+        public bool DialogBase_IsOkEnabled { get; set; } = true;
+
+        #endregion
+
         public MainWindow()
         {
             InitializeComponent();
@@ -36,6 +48,8 @@ namespace Utilities.DotNet.WPF.Controls.Demo
 
             FileSelectionBox_ButtonPosition.ItemsSource = Enum.GetValues( typeof( FileSelectionBox.EHorizontalPosition ) );
             FileSelectionBox_ButtonPosition.SelectedIndex = 1;
+
+            DialogBase_ShowDialogCommand = new DelegateCommand( DialogBase_ShowDialog );
 
             DataContext = this;
         }
@@ -76,6 +90,16 @@ namespace Utilities.DotNet.WPF.Controls.Demo
             {
                 SearchHistory.RemoveAt( SearchHistory.Count - 1 );
             }
+        }
+
+        private void DialogBase_ShowDialog()
+        {
+            var dialog = new SampleDialog( this );
+            dialog.IsOkEnabled = DialogBase_IsOkEnabled;
+
+            var result = dialog.ShowDialog();
+
+            DialogBase_Result = result.HasValue ? ( result.Value ? "OK" : "Cancel" ) : "No result";
         }
 
         private void OnSelectedThemeIndexChanged()
