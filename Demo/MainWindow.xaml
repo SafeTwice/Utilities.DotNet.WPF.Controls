@@ -32,6 +32,10 @@
                 <local:NumericUpDownDemo/>
             </TabItem>
 
+            <TabItem Header="ListSelector" d:IsSelected="True">
+                <local:ListSelectorDemo/>
+            </TabItem>
+
             <TabItem Header="DialogBase">
                 <local:DialogBaseDemo/>
             </TabItem>

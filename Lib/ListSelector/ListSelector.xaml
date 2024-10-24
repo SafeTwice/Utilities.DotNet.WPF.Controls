@@ -1,0 +1,98 @@
+﻿<UserControl x:Class="Utilities.DotNet.WPF.Controls.ListSelector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Utilities.DotNet.WPF.Controls"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance {x:Type local:ListSelector}}"
+             d:DesignHeight="250" d:DesignWidth="400">
+    <UserControl.Resources>
+        <Style x:Key="SelectionButton" TargetType="Button">
+            <Setter Property="Margin" Value="8,5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Grid.Column="0" Header="Available" Padding="4">
+            <ListBox x:Name="AvailableListBox"
+                     ItemsSource="{Binding AvailableItemsSource}" d:ItemsSource="{d:SampleData ItemCount=3}"
+                     ItemTemplate="{Binding ItemTemplate}" ItemTemplateSelector="{Binding ItemTemplateSelector}"
+                     MouseDoubleClick="AvailableListBox_OnMouseDoubleClick"
+                     SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+        </GroupBox>
+
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Vertical">
+            <Button ToolTip="Unselect All" Click="OnUnselectAll">
+                <Grid>
+                    <Path Margin="-4,0,4,0" Data="M 410.312 454.729 151.767 244.996 410.312 35.271 381.693 0 79.688 244.996 381.693 490 Z" Fill="Black" Stretch="Fill" Height="10" Width="8"/>
+                    <Path Margin="3,0,-3,0" Data="M 410.312 454.729 151.767 244.996 410.312 35.271 381.693 0 79.688 244.996 381.693 490 Z" Fill="Black" Stretch="Fill" Height="10" Width="8"/>
+                </Grid>
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource SelectionButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasItems, ElementName=SelectedListBox}" Value="False">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button ToolTip="Unselect" Click="OnUnselect">
+                <Path Margin="-1,0,1,0" Data="M 410.312 454.729 151.767 244.996 410.312 35.271 381.693 0 79.688 244.996 381.693 490 Z" Fill="Black" Stretch="Fill" Height="10" Width="8"/>
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource SelectionButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasItems, ElementName=SelectedListBox}" Value="False">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button ToolTip="Select" Click="OnSelect">
+                <Path Data="M 106.601 490 412.15 245.004 106.601 0 77.85 35.856 338.702 245.004 77.85 454.159 Z" Fill="Black" Stretch="Fill" Height="10" Width="8"/>
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource SelectionButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasItems, ElementName=AvailableListBox}" Value="False">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button ToolTip="Select All" Click="OnSelectAll">
+                <Grid>
+                    <Path Margin="-3,0,3,0" Data="M 106.601 490 412.15 245.004 106.601 0 77.85 35.856 338.702 245.004 77.85 454.159 Z" Fill="Black" Stretch="Fill" Height="10" Width="8"/>
+                    <Path Margin="4,0,-4,0" Data="M 106.601 490 412.15 245.004 106.601 0 77.85 35.856 338.702 245.004 77.85 454.159 Z" Fill="Black" Stretch="Fill" Height="10" Width="8"/>
+                </Grid>
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource SelectionButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasItems, ElementName=AvailableListBox}" Value="False">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+
+        <GroupBox Grid.Column="2" Header="Selected" Padding="4">
+            <ListBox x:Name="SelectedListBox"
+                     ItemsSource="{Binding SelectedItemsSource}" d:ItemsSource="{d:SampleData ItemCount=3}"
+                     ItemTemplate="{Binding ItemTemplate}" ItemTemplateSelector="{Binding ItemTemplateSelector}"
+                     MouseDoubleClick="SelectedListBox_OnMouseDoubleClick"
+                     SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+        </GroupBox>
+    </Grid>
+</UserControl>
