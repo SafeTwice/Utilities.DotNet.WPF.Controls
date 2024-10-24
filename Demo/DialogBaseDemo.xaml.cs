@@ -8,27 +8,27 @@ namespace Utilities.DotNet.WPF.Controls.Demo
 {
     public partial class DialogBaseDemo : UserControl, INotifyPropertyChanged
     {
-        public ICommand DialogBase_ShowDialogCommand { get; }
+        public ICommand ShowDialogCommand { get; }
 
-        public string DialogBase_Result { get; private set; } = "No result yet...";
+        public string Result { get; private set; } = "No result yet...";
 
-        public bool DialogBase_IsOkEnabled { get; set; } = true;
+        public bool IsOkEnabled { get; set; } = true;
 
         public DialogBaseDemo()
         {
-            DialogBase_ShowDialogCommand = new DelegateCommand( DialogBase_ShowDialog );
+            ShowDialogCommand = new DelegateCommand( ShowDialog );
 
             InitializeComponent();
         }
 
-        private void DialogBase_ShowDialog()
+        private void ShowDialog()
         {
             var dialog = new SampleDialog( Window.GetWindow( this ) );
-            dialog.IsOkEnabled = DialogBase_IsOkEnabled;
+            dialog.IsOkEnabled = IsOkEnabled;
 
             var result = dialog.ShowDialog();
 
-            DialogBase_Result = result.HasValue ? ( result.Value ? "OK" : "Cancel" ) : "No result";
+            Result = result.HasValue ? ( result.Value ? "OK" : "Cancel" ) : "No result";
         }
     }
 }

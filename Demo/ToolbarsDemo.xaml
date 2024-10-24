@@ -31,7 +31,7 @@
                             </DockPanel>
                         </controls:SlidingToolbar>
 
-                        <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
+                        <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5" Margin="0,20,0,0">
                             <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
 
                                 <TextBlock Text="IsCloseButtonVisible" Style="{StaticResource Settings.Label}"/>

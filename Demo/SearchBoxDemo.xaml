@@ -25,7 +25,7 @@
                     <TextBox IsReadOnly="True" Padding="2" Text="{Binding SearchingText}"/>
                 </DockPanel>
 
-                <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
+                <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5" Margin="0,20,0,0">
                     <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
 
                         <TextBlock Text="ClearButtonPosition" Style="{StaticResource Settings.Label}"/>

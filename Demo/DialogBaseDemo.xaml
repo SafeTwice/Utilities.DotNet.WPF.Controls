@@ -12,18 +12,20 @@
         <Border BorderThickness="1" BorderBrush="DarkGray" Background="{x:Static SystemColors.WindowBrush}">
             <StackPanel Orientation="Vertical" Margin="0,20">
                 <Button Content="Show Dialog"
-                        Command="{Binding DialogBase_ShowDialogCommand}"
+                        Command="{Binding ShowDialogCommand}"
                         Padding="10,5"
                         HorizontalAlignment="Center"/>
+
                 <DockPanel HorizontalAlignment="Center" Margin="5">
                     <TextBlock DockPanel.Dock="Left" Text="Dialog Result" Margin="5,5,2,5" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding DialogBase_Result, Mode=OneWay}" IsReadOnly="True" Margin="5" MinWidth="150"/>
+                    <TextBox Text="{Binding Result, Mode=OneWay}" IsReadOnly="True" Margin="5" MinWidth="150"/>
                 </DockPanel>
-                <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
+
+                <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5" Margin="0,20,0,0">
                     <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
 
                         <TextBlock Text="IsOkEnabled" Style="{StaticResource Settings.Label}"/>
-                        <CheckBox IsChecked="{Binding DialogBase_IsOkEnabled}"
+                        <CheckBox IsChecked="{Binding IsOkEnabled}"
                                   Style="{DynamicResource Settings.CheckBox}"/>
 
                     </controls:AutoGrid>

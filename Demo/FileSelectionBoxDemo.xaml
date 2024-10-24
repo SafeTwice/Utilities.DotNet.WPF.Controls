@@ -16,7 +16,7 @@
                                            IsEnabled="{Binding IsChecked, ElementName=FileSelectionBox_IsEnabled}"
                                            ButtonPosition="{Binding SelectedItem, ElementName=FileSelectionBox_ButtonPosition}"/>
 
-                <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
+                <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5" Margin="0,20,0,0">
                     <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
 
                         <TextBlock Text="ButtonPosition" Style="{StaticResource Settings.Label}"/>
