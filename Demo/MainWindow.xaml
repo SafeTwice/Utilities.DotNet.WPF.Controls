@@ -3,179 +3,39 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:controls="clr-namespace:Utilities.DotNet.WPF.Controls;assembly=Utilities.DotNet.WPF.Controls"
         xmlns:local="clr-namespace:Utilities.DotNet.WPF.Controls.Demo"
+        xmlns:controls="clr-namespace:Utilities.DotNet.WPF.Controls;assembly=Utilities.DotNet.WPF.Controls"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type local:MainWindow}}"
         KeyDown="Window_OnKeyDown"
         Title="Utilities.DotNet.WPF.Controls Demo" Height="450" Width="800" MinHeight="300" MinWidth="400">
-    <Window.Resources>
-        <Style x:Key="Settings.Label" TargetType="TextBlock">
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5,8,10,8"/>
-        </Style>
-    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TabControl Grid.Row="0">
-            
+
             <TabItem x:Name="ToolbarsTabItem" Header="Toolbars" IsSelected="True">
-                <controls:ContentControlWithToolbar IsHeaderVisible="{Binding IsContentToolbarVisible}" d:IsHeaderVisible="true" Margin="1" HeaderMinWidth="250">
-                    
-                    <controls:ContentControlWithToolbar.Header>
-                        <controls:SearchBox Margin="2" AutoHistorySize="5"
-                                            HintText="Find..." />
-                    </controls:ContentControlWithToolbar.Header>
-                    
-                    <Border BorderThickness="1" BorderBrush="DarkGray" Background="{x:Static SystemColors.WindowBrush}">
-                        <DockPanel>
-                            <TextBlock DockPanel.Dock="Top" Text="Press F3 to show ContentControlWithToolbar's toolbar..." Margin="10"/>
-                            <StackPanel Orientation="Vertical">
-
-                                <controls:SlidingToolbar x:Name="SlidingToolbar" Margin="0,10"
-                                                         IsEnabled="{Binding IsChecked, ElementName=SlidingToolbar_IsEnabled}"
-                                                         IsCloseButtonVisible="{Binding IsChecked, ElementName=SlidingToolbar_IsCloseButtonVisible}"
-                                                         MinWidth="{Binding Value, ElementName=SlidingToolbar_MinWidth}">
-                                    <DockPanel>
-                                        <TextBlock DockPanel.Dock="Left" Text="SlidingToolbar" Margin="5" VerticalAlignment="Center"/>
-                                        <TextBox Text="Input..." Margin="10,1" VerticalContentAlignment="Center"/>
-                                    </DockPanel>
-                                </controls:SlidingToolbar>
-
-                                <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
-                                    <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
-
-                                        <TextBlock Text="IsCloseButtonVisible" Style="{StaticResource Settings.Label}"/>
-                                        <CheckBox x:Name="SlidingToolbar_IsCloseButtonVisible" IsChecked="False"
-                                                  Unchecked="SlidingToolbar_IsCloseButtonVisible_Changed"
-                                                  Style="{DynamicResource Settings.CheckBox}"/>
-
-                                        <TextBlock Text="MinWidth" Style="{StaticResource Settings.Label}"/>
-                                        <DockPanel>
-                                            <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" MinWidth="25" Margin="5,0,0,0"
-                                                       Text="{Binding Value, StringFormat={}{0:F0}, ElementName=SlidingToolbar_MinWidth}"/>
-                                            <Slider x:Name="SlidingToolbar_MinWidth" Minimum="0" Maximum="600" Value="250"
-                                                    TickFrequency="1" IsSnapToTickEnabled="True"
-                                                    MinWidth="100"  VerticalAlignment="Center"/>
-                                        </DockPanel>
-
-                                        <TextBlock Text="IsEnabled" Style="{StaticResource Settings.Label}"/>
-                                        <CheckBox x:Name="SlidingToolbar_IsEnabled" IsChecked="True"
-                                                  Style="{DynamicResource Settings.CheckBox}"/>
-
-                                    </controls:AutoGrid>
-                                </GroupBox>
-
-                            </StackPanel>
-                        </DockPanel>
-                    </Border>
-                    
-                </controls:ContentControlWithToolbar>
+                <local:ToolbarsDemo x:Name="ToolbarsDemo"/>
             </TabItem>
-            
+
             <TabItem Header="SearchBox">
-                <Border BorderThickness="1" BorderBrush="DarkGray" Background="{x:Static SystemColors.WindowBrush}">
-                    <StackPanel Orientation="Vertical" Margin="0,20">
-
-                        <controls:SearchBox Width="300" Margin="5" Find="SearchBox_Find"
-                                            AutoHistorySize="5"
-                                            IsEnabled="{Binding IsChecked, ElementName=SearchBox_IsEnabled}"
-                                            ClearButtonPosition="{Binding SelectedItem, ElementName=SearchBox_ClearButtonPosition}"
-                                            AreFindButtonsVisible="{Binding IsChecked, ElementName=SearchBox_AreFindButtonsVisible}"
-                                            TrimSearchText="{Binding IsChecked, ElementName=SearchBox_TrimSearchText}"
-                                            HintText="Find..."/>
-
-                        <DockPanel Width="300" Margin="5">
-                            <TextBlock DockPanel.Dock="Left" Text="Searching:" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                            <TextBox IsReadOnly="True" Padding="2" Text="{Binding SearchingText}"/>
-                        </DockPanel>
-
-                        <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
-                            <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
-
-                                <TextBlock Text="ClearButtonPosition" Style="{StaticResource Settings.Label}"/>
-                                <ComboBox x:Name="SearchBox_ClearButtonPosition" MinWidth="60" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-
-                                <TextBlock Text="AreFindButtonsVisible" Style="{StaticResource Settings.Label}"/>
-                                <CheckBox x:Name="SearchBox_AreFindButtonsVisible" IsChecked="True" Style="{DynamicResource Settings.CheckBox}"/>
-
-                                <TextBlock Text="TrimSearchText" Style="{StaticResource Settings.Label}"/>
-                                <CheckBox x:Name="SearchBox_TrimSearchText" IsChecked="False" Style="{DynamicResource Settings.CheckBox}"/>
-
-                                <TextBlock Text="IsEnabled" Style="{StaticResource Settings.Label}"/>
-                                <CheckBox x:Name="SearchBox_IsEnabled" IsChecked="True"
-                                                  Style="{DynamicResource Settings.CheckBox}"/>
-
-                            </controls:AutoGrid>
-                        </GroupBox>
-
-                    </StackPanel>
-                </Border>
+                <local:SearchBoxDemo/>
             </TabItem>
-            
+
             <TabItem Header="FileSelectionBox">
-                <Border BorderThickness="1" BorderBrush="DarkGray" Background="{x:Static SystemColors.WindowBrush}">
-                    <StackPanel Orientation="Vertical" Margin="0,20">
-
-                        <controls:FileSelectionBox Width="300" Margin="5"
-                                                   IsEnabled="{Binding IsChecked, ElementName=FileSelectionBox_IsEnabled}"
-                                                   ButtonPosition="{Binding SelectedItem, ElementName=FileSelectionBox_ButtonPosition}"/>
-
-                        <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
-                            <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
-
-                                <TextBlock Text="ButtonPosition" Style="{StaticResource Settings.Label}"/>
-                                <ComboBox x:Name="FileSelectionBox_ButtonPosition" MinWidth="60" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-
-                                <TextBlock Text="IsEnabled" Style="{StaticResource Settings.Label}"/>
-                                <CheckBox x:Name="FileSelectionBox_IsEnabled" IsChecked="True"
-                                                  Style="{DynamicResource Settings.CheckBox}"/>
-
-                            </controls:AutoGrid>
-                        </GroupBox>
-
-                    </StackPanel>
-                </Border>
+                <local:FileSelectionBoxDemo/>
             </TabItem>
 
             <TabItem Header="NumericUpDown">
-                <Border BorderThickness="1" BorderBrush="DarkGray" Background="{x:Static SystemColors.WindowBrush}">
-                    <StackPanel Orientation="Vertical" Margin="0,20">
-                        <controls:IntegerUpDown Width="80" Margin="5"/>
-                        <controls:DualIntegerUpDown Width="200" Margin="5" UpperLabel="h" LowerLabel="min" Factor="60"/>
-                    </StackPanel>
-                </Border>
+                <local:NumericUpDownDemo/>
             </TabItem>
 
             <TabItem Header="DialogBase">
-                <Border BorderThickness="1" BorderBrush="DarkGray" Background="{x:Static SystemColors.WindowBrush}">
-                    <StackPanel Orientation="Vertical" Margin="0,20">
-                        <Button Content="Show Dialog"
-                                Command="{Binding DialogBase_ShowDialogCommand}"
-                                Padding="10,5"
-                                HorizontalAlignment="Center"/>
-                        <DockPanel HorizontalAlignment="Center" Margin="5">
-                            <TextBlock DockPanel.Dock="Left" Text="Dialog Result" Margin="5,5,2,5" VerticalAlignment="Center"/>
-                            <TextBox Text="{Binding DialogBase_Result, Mode=OneWay}" IsReadOnly="True" Margin="5" MinWidth="150"/>
-                        </DockPanel>
-                        <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
-                            <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
-
-                                <TextBlock Text="IsOkEnabled" Style="{StaticResource Settings.Label}"/>
-                                <CheckBox IsChecked="{Binding DialogBase_IsOkEnabled}"
-                                          Style="{DynamicResource Settings.CheckBox}"/>
-
-                            </controls:AutoGrid>
-                        </GroupBox>
-                    </StackPanel>
-                </Border>
-
+                <local:DialogBaseDemo/>
             </TabItem>
-            
+
         </TabControl>
 
         <StatusBar Grid.Row="1">

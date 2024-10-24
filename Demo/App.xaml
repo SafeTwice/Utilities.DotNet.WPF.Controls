@@ -9,7 +9,8 @@
                 <!-- Placeholder for theme loading, must be first -->
                 <ResourceDictionary/>
                 <!-- Dynamic resources to be reloaded when the theme changes, must be second -->
-                <ResourceDictionary Source="DynamicResources.xaml"/>
+                <ResourceDictionary Source="Resources/DynamicResources.xaml"/>
+                <ResourceDictionary Source="Resources/StaticResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

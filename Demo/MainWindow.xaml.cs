@@ -1,14 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Input;
-using Utilities.DotNet.WPF.Commands;
 
 namespace Utilities.DotNet.WPF.Controls.Demo
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         #region Themes
@@ -19,37 +13,9 @@ namespace Utilities.DotNet.WPF.Controls.Demo
 
         #endregion
 
-        public bool IsContentToolbarVisible { get; set; } = false;
-
-        #region SearchBox
-
-        public ObservableCollection<string> SearchHistory { get; } = new ObservableCollection<string>();
-
-        public string SearchingText { get; set; } = "No search text yet...";
-
-        #endregion
-
-        #region DialogBase
-
-        public ICommand DialogBase_ShowDialogCommand { get; } 
-
-        public string DialogBase_Result { get; private set; } = "No result yet...";
-
-        public bool DialogBase_IsOkEnabled { get; set; } = true;
-
-        #endregion
-
         public MainWindow()
         {
             InitializeComponent();
-
-            SearchBox_ClearButtonPosition.ItemsSource = Enum.GetValues( typeof( SearchBox.EHorizontalPosition ) );
-            SearchBox_ClearButtonPosition.SelectedIndex = 1;
-
-            FileSelectionBox_ButtonPosition.ItemsSource = Enum.GetValues( typeof( FileSelectionBox.EHorizontalPosition ) );
-            FileSelectionBox_ButtonPosition.SelectedIndex = 1;
-
-            DialogBase_ShowDialogCommand = new DelegateCommand( DialogBase_ShowDialog );
 
             DataContext = this;
         }
@@ -58,48 +24,9 @@ namespace Utilities.DotNet.WPF.Controls.Demo
         {
             if( ( e.Key == System.Windows.Input.Key.F3 ) && ToolbarsTabItem.IsSelected )
             {
-                IsContentToolbarVisible = true;
+                ToolbarsDemo.IsContentToolbarVisible = true;
                 e.Handled = true;
             }
-        }
-
-        private void SlidingToolbar_IsCloseButtonVisible_Changed( object sender, RoutedEventArgs e )
-        {
-            SlidingToolbar.Visibility = Visibility.Visible;
-        }
-
-        private void SearchBox_Find( object sender, FindEventArgs e )
-        {
-            var searchedText = e.Text;
-
-            SearchingText = $"[{(e.SearchBackwards?"Backward":"Forward")}] {searchedText}";
-
-            var searchHistoryIndex = SearchHistory.IndexOf( searchedText );
-
-            if( searchHistoryIndex > 0 )
-            {
-                SearchHistory.Move( searchHistoryIndex, 0 );
-            }
-
-            if( searchHistoryIndex < 0 )
-            {
-                SearchHistory.Insert( 0, searchedText );
-            }
-
-            if( SearchHistory.Count > 10 )
-            {
-                SearchHistory.RemoveAt( SearchHistory.Count - 1 );
-            }
-        }
-
-        private void DialogBase_ShowDialog()
-        {
-            var dialog = new SampleDialog( this );
-            dialog.IsOkEnabled = DialogBase_IsOkEnabled;
-
-            var result = dialog.ShowDialog();
-
-            DialogBase_Result = result.HasValue ? ( result.Value ? "OK" : "Cancel" ) : "No result";
         }
 
         private void OnSelectedThemeIndexChanged()
