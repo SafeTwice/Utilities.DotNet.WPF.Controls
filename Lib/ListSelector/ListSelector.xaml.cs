@@ -3,6 +3,7 @@
 /// @license    See LICENSE.txt
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -187,8 +188,7 @@ namespace Utilities.DotNet.WPF.Controls
                 oldAvailableItemsSourceView.CollectionChanged -= OnAvailableItemsCollectionChangedEvent;
             }
 
-            m_internalAvailableItems.Clear();
-            m_internalAvailableItems.AddRange( newValue.Cast<object>() );
+            RegenerateInternalAvailableItems( newValue.Cast<object>() );
 
             var newAvailableItemsSourceView = CollectionViewSource.GetDefaultView( newValue );
             if( newAvailableItemsSourceView != null )
@@ -212,6 +212,8 @@ namespace Utilities.DotNet.WPF.Controls
                     if( e.OldItems != null )
                     {
                         m_internalAvailableItems.RemoveRange( e.OldItems.Cast<object>() );
+
+                        PruneInvalidSelectedItems();
                     }
                     break;
 
@@ -219,6 +221,8 @@ namespace Utilities.DotNet.WPF.Controls
                     if( e.OldItems != null )
                     {
                         m_internalAvailableItems.RemoveRange( e.OldItems.Cast<object>() );
+
+                        PruneInvalidSelectedItems();
                     }
                     if( e.NewItems != null )
                     {
@@ -239,9 +243,26 @@ namespace Utilities.DotNet.WPF.Controls
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    m_internalAvailableItems.Clear();
-                    m_internalAvailableItems.AddRange( ( (IEnumerable) sender! ).Cast<object>() );
+                    RegenerateInternalAvailableItems( ( (IEnumerable) sender! ).Cast<object>() );
                     break;
+            }
+        }
+
+        private void RegenerateInternalAvailableItems( IEnumerable<object> items )
+        {
+            m_internalAvailableItems.Clear();
+            m_internalAvailableItems.AddRange( items );
+
+            PruneInvalidSelectedItems();
+        }
+
+        private void PruneInvalidSelectedItems()
+        {
+            if( SelectedItemsSource != null )
+            {
+                var invalidSelectedItems = SelectedItemsSource.Cast<object>().Where( item => !m_internalAvailableItems.Contains( item ) ).ToList();
+
+                SelectedItemsSource.RemoveRange( invalidSelectedItems );
             }
         }
 
@@ -252,6 +273,8 @@ namespace Utilities.DotNet.WPF.Controls
 
         private void OnSelectedItemsSourcePropertyChangedEvent()
         {
+            PruneInvalidSelectedItems();
+
             InternalAvailableItemsView.Refresh();
         }
 
