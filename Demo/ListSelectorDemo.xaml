@@ -18,7 +18,13 @@
 
                 <controls:ListSelector Grid.Row="0" Margin="5"
                                        AvailableItemsSource="{Binding AvailableItems}"
-                                       SelectedItemsSource="{Binding SelectedItems}"/>
+                                       SelectedItemsSource="{Binding SelectedItems}">
+                    <controls:ListSelector.ItemTemplate>
+                        <DataTemplate DataType="local:DemoItem">
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </controls:ListSelector.ItemTemplate>
+                </controls:ListSelector>
 
                 <GroupBox Grid.Row="1" Header="Settings" HorizontalAlignment="Center" Padding="5" Margin="0,20,0,0">
                     <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
@@ -29,6 +35,10 @@
 
                         <TextBlock Text="Order Selected Items" Style="{StaticResource Settings.Label}"/>
                         <CheckBox IsChecked="{Binding IsSelectedItemsOrderEnabled}"
+                                  Style="{DynamicResource Settings.CheckBox}"/>
+
+                        <TextBlock Text="Filter Available Items" Style="{StaticResource Settings.Label}"/>
+                        <CheckBox IsChecked="{Binding IsAvailableItemsFilterEnabled}"
                                   Style="{DynamicResource Settings.CheckBox}"/>
 
                     </controls:AutoGrid>

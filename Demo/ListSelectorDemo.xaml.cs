@@ -5,27 +5,38 @@ using Utilities.DotNet.Collections.Observables;
 
 namespace Utilities.DotNet.WPF.Controls.Demo
 {
+    public class DemoItem
+    {
+        public string Name => $"Item {Id}";
+
+        public int Id { get; }
+
+        public DemoItem( int id ) => Id = id;
+    }
+
     public partial class ListSelectorDemo : UserControl, INotifyPropertyChanged
     {
-        public ObservableList<string> AvailableItems { get; } = new()
+        public ObservableList<DemoItem> AvailableItems { get; } = new()
         {
-            "Item 1",
-            "Item 9",
-            "Item 2",
-            "Item 4",
-            "Item 3",
-            "Item 5",
-            "Item 7",
-            "Item 6",
-            "Item 8",
-            "Item 10",
+            new DemoItem( 10 ),
+            new DemoItem( 1 ),
+            new DemoItem( 9 ),
+            new DemoItem( 2 ),
+            new DemoItem( 4 ),
+            new DemoItem( 3 ),
+            new DemoItem( 5 ),
+            new DemoItem( 7 ),
+            new DemoItem( 6 ),
+            new DemoItem( 8 ),
         };
 
-        public ObservableList<string> SelectedItems { get; } = new();
+        public ObservableList<DemoItem> SelectedItems { get; } = new();
 
         public bool IsAvailableItemsOrderEnabled { get; set; } = false;
 
         public bool IsSelectedItemsOrderEnabled { get; set; } = false;
+
+        public bool IsAvailableItemsFilterEnabled { get; set; } = false;
 
         public ListSelectorDemo()
         {
@@ -38,7 +49,7 @@ namespace Utilities.DotNet.WPF.Controls.Demo
             AvailableItemsView.SortDescriptions.Clear();
             if( IsAvailableItemsOrderEnabled )
             {
-                AvailableItemsView.SortDescriptions.Add( new SortDescription( string.Empty, ListSortDirection.Ascending ) );
+                AvailableItemsView.SortDescriptions.Add( new SortDescription( nameof( DemoItem.Id ), ListSortDirection.Ascending ) );
             }
         }
 
@@ -48,7 +59,17 @@ namespace Utilities.DotNet.WPF.Controls.Demo
             SelectedItemsView.SortDescriptions.Clear();
             if( IsSelectedItemsOrderEnabled )
             {
-                SelectedItemsView.SortDescriptions.Add( new SortDescription( string.Empty, ListSortDirection.Ascending ) );
+                SelectedItemsView.SortDescriptions.Add( new SortDescription( nameof( DemoItem.Id ), ListSortDirection.Ascending ) );
+            }
+        }
+
+        // Called by Fody/PropertyChanged
+        private void OnIsAvailableItemsFilterEnabledChanged()
+        {
+            AvailableItemsView.Filter = null;
+            if( IsAvailableItemsFilterEnabled )
+            {
+                AvailableItemsView.Filter = item => ( ( ( (DemoItem) item ).Id % 2 ) == 1 );
             }
         }
 
