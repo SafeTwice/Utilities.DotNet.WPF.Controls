@@ -3,6 +3,7 @@
 /// @license    See LICENSE.txt
 
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -10,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Utilities.DotNet.Collections;
+using Utilities.DotNet.Collections.Observables;
 
 namespace Utilities.DotNet.WPF.Controls
 {
@@ -104,6 +106,26 @@ namespace Utilities.DotNet.WPF.Controls
             InitializeComponent();
 
             ( (FrameworkElement) Content ).DataContext = this;
+
+            InternalAvailableItems = m_internalAvailableItems;
+
+            InternalAvailableItemsView.Filter = item => !SelectedItemsSource?.Contains( item ) ?? true;
+        }
+
+        //===========================================================================
+        //                          INTERNAL PROPERTIES
+        //===========================================================================
+
+        private static readonly DependencyPropertyKey InternalAvailableItemsPropertyKey =
+            DependencyProperty.RegisterReadOnly( nameof( InternalAvailableItems ), typeof( IObservableReadOnlyList<object> ), typeof( ListSelector ),
+                new FrameworkPropertyMetadata( null ) );
+
+        [Bindable( false )]
+        [Browsable( false )]
+        private IObservableReadOnlyList<object> InternalAvailableItems
+        {
+            get => (IObservableReadOnlyList<object>) GetValue( InternalAvailableItemsPropertyKey.DependencyProperty );
+            set => SetValue( InternalAvailableItemsPropertyKey, value );
         }
 
         //===========================================================================
@@ -114,20 +136,14 @@ namespace Utilities.DotNet.WPF.Controls
         {
             SelectedItemsSource?.Clear();
 
-            AvailableItemsSourceView?.Refresh();
+            InternalAvailableItemsView.Refresh();
         }
 
         private void OnSelectAll( object sender, RoutedEventArgs e )
         {
-            var availableItemsSourceView = AvailableItemsSourceView;
-            if( availableItemsSourceView == null )
-            {
-                return;
-            }
+            SelectedItemsSource?.AddRange( InternalAvailableItemsView );
 
-            SelectedItemsSource?.AddRange( availableItemsSourceView );
-
-            AvailableItemsSourceView?.Refresh();
+            InternalAvailableItemsView.Refresh();
         }
 
         private void OnSelect( object sender, RoutedEventArgs e )
@@ -136,7 +152,7 @@ namespace Utilities.DotNet.WPF.Controls
 
             SelectedItemsSource?.AddRange( selectedElements );
 
-            AvailableItemsSourceView?.Refresh();
+            InternalAvailableItemsView.Refresh();
         }
 
         private void OnUnselect( object sender, RoutedEventArgs e )
@@ -145,7 +161,7 @@ namespace Utilities.DotNet.WPF.Controls
 
             SelectedItemsSource?.RemoveRange( selectedElements );
 
-            AvailableItemsSourceView?.Refresh();
+            InternalAvailableItemsView.Refresh();
         }
 
         private void AvailableListBox_OnMouseDoubleClick( object sender, MouseButtonEventArgs e )
@@ -160,18 +176,73 @@ namespace Utilities.DotNet.WPF.Controls
 
         private static void OnAvailableItemsSourcePropertyChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
         {
-            ( (ListSelector) d ).OnAvailableItemsSourcePropertyChangedEvent();
+            ( (ListSelector) d ).OnAvailableItemsSourcePropertyChangedEvent( (IEnumerable) e.OldValue, (IEnumerable) e.NewValue );
         }
 
-        private void OnAvailableItemsSourcePropertyChangedEvent()
+        private void OnAvailableItemsSourcePropertyChangedEvent( IEnumerable oldValue, IEnumerable newValue )
         {
-            var availableItemsSourceView = AvailableItemsSourceView;
-            if( availableItemsSourceView == null )
+            var oldAvailableItemsSourceView = CollectionViewSource.GetDefaultView( oldValue );
+            if( oldAvailableItemsSourceView != null )
             {
-                return;
+                oldAvailableItemsSourceView.CollectionChanged -= OnAvailableItemsCollectionChangedEvent;
             }
 
-            availableItemsSourceView.Filter = item => !SelectedItemsSource?.Contains( item ) ?? true;
+            m_internalAvailableItems.Clear();
+            m_internalAvailableItems.AddRange( newValue.Cast<object>() );
+
+            var newAvailableItemsSourceView = CollectionViewSource.GetDefaultView( newValue );
+            if( newAvailableItemsSourceView != null )
+            {
+                newAvailableItemsSourceView.CollectionChanged += OnAvailableItemsCollectionChangedEvent;
+            }
+        }
+
+        private void OnAvailableItemsCollectionChangedEvent( object? sender, NotifyCollectionChangedEventArgs e )
+        {
+            switch( e.Action )
+            {
+                case NotifyCollectionChangedAction.Add:
+                    if( e.NewItems != null )
+                    {
+                        m_internalAvailableItems.AddRange( e.NewItems.Cast<object>() );
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    if( e.OldItems != null )
+                    {
+                        m_internalAvailableItems.RemoveRange( e.OldItems.Cast<object>() );
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Replace:
+                    if( e.OldItems != null )
+                    {
+                        m_internalAvailableItems.RemoveRange( e.OldItems.Cast<object>() );
+                    }
+                    if( e.NewItems != null )
+                    {
+                        m_internalAvailableItems.AddRange( e.NewItems.Cast<object>() );
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Move:
+                    if( e.NewItems != null )
+                    {
+                        if( e.NewItems.Count > 0 )
+                        {
+                            throw new System.NotSupportedException( "Moving multiple items is not supported." );
+                        }
+
+                        m_internalAvailableItems.Move( e.OldStartingIndex, e.NewStartingIndex );
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Reset:
+                    m_internalAvailableItems.Clear();
+                    m_internalAvailableItems.AddRange( ( (IEnumerable) sender! ).Cast<object>() );
+                    break;
+            }
         }
 
         private static void OnSelectedItemsSourcePropertyChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
@@ -181,13 +252,19 @@ namespace Utilities.DotNet.WPF.Controls
 
         private void OnSelectedItemsSourcePropertyChangedEvent()
         {
-            AvailableItemsSourceView?.Refresh();
+            InternalAvailableItemsView.Refresh();
         }
 
         //===========================================================================
         //                           PRIVATE PROPERTIES
         //===========================================================================
 
-        private ICollectionView? AvailableItemsSourceView => ( AvailableItemsSource == null ) ? null : CollectionViewSource.GetDefaultView( AvailableItemsSource );
+        private ICollectionView InternalAvailableItemsView => CollectionViewSource.GetDefaultView( InternalAvailableItems );
+
+        //===========================================================================
+        //                           PRIVATE ATTRIBUTES
+        //===========================================================================
+
+        private readonly ObservableList<object> m_internalAvailableItems = new();
     }
 }

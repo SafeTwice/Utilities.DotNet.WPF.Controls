@@ -14,6 +14,7 @@
             <Setter Property="Width" Value="24"/>
             <Setter Property="Height" Value="24"/>
         </Style>
+        <!--<CollectionViewSource x:Key="{x:Static local:ListSelector.FILTERED_AVAILABLE_ITEMS_SOURCE_KEY}" Source="{Binding AvailableItemsSource}"/>-->
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -24,7 +25,7 @@
 
         <GroupBox Grid.Column="0" Header="Available" Padding="4">
             <ListBox x:Name="AvailableListBox"
-                     ItemsSource="{Binding AvailableItemsSource}" d:ItemsSource="{d:SampleData ItemCount=3}"
+                     ItemsSource="{Binding InternalAvailableItems}" d:ItemsSource="{d:SampleData ItemCount=3}"
                      ItemTemplate="{Binding ItemTemplate}" ItemTemplateSelector="{Binding ItemTemplateSelector}"
                      MouseDoubleClick="AvailableListBox_OnMouseDoubleClick"
                      SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
