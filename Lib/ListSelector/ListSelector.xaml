@@ -23,7 +23,7 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Column="0" Header="Available" Padding="4">
+        <GroupBox Grid.Column="0" Header="{Binding AvailableHeaderText}" Padding="4">
             <ListBox x:Name="AvailableListBox"
                      ItemsSource="{Binding InternalAvailableItems}" d:ItemsSource="{d:SampleData ItemCount=3}"
                      ItemTemplate="{Binding ItemTemplate}" ItemTemplateSelector="{Binding ItemTemplateSelector}"
@@ -88,7 +88,7 @@
             </Button>
         </StackPanel>
 
-        <GroupBox Grid.Column="2" Header="Selected" Padding="4">
+        <GroupBox Grid.Column="2" Header="{Binding SelectedHeaderText}" Padding="4">
             <ListBox x:Name="SelectedListBox"
                      ItemsSource="{Binding SelectedItemsSource}" d:ItemsSource="{d:SampleData ItemCount=3}"
                      ItemTemplate="{Binding ItemTemplate}" ItemTemplateSelector="{Binding ItemTemplateSelector}"

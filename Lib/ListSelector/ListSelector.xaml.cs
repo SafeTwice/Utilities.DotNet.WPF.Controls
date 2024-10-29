@@ -26,6 +26,46 @@ namespace Utilities.DotNet.WPF.Controls
         //===========================================================================
 
         /// <summary>
+        /// Dependency property for the <see cref="AvailableHeaderText"/> property.
+        /// </summary>
+        public static readonly DependencyProperty AvailableHeaderTextProperty =
+            DependencyProperty.Register( nameof( AvailableHeaderText ), typeof( string ), typeof( ListSelector ),
+                new FrameworkPropertyMetadata( "Available" ) );
+
+        /// <summary>
+        /// Header text for the list of available items.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        [Category( "Common" )]
+        [DefaultValue( "Available" )]
+        public string AvailableHeaderText
+        {
+            get => (string) GetValue( AvailableHeaderTextProperty );
+            set => SetValue( AvailableHeaderTextProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for the <see cref="SelectedHeaderText"/> property.
+        /// </summary>
+        public static readonly DependencyProperty SelectedHeaderTextProperty =
+            DependencyProperty.Register( nameof( SelectedHeaderText ), typeof( string ), typeof( ListSelector ),
+                new FrameworkPropertyMetadata( "Selected" ) );
+
+        /// <summary>
+        /// Header text for the list of selected items.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        [Category( "Common" )]
+        [DefaultValue( "Selected" )]
+        public string SelectedHeaderText
+        {
+            get => (string) GetValue( SelectedHeaderTextProperty );
+            set => SetValue( SelectedHeaderTextProperty, value );
+        }
+
+        /// <summary>
         /// Dependency property for the <see cref="AvailableItemsSource"/> property.
         /// </summary>
         public static readonly DependencyProperty AvailableItemsSourceProperty =
@@ -177,10 +217,10 @@ namespace Utilities.DotNet.WPF.Controls
 
         private static void OnAvailableItemsSourcePropertyChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
         {
-            ( (ListSelector) d ).OnAvailableItemsSourcePropertyChangedEvent( (IEnumerable) e.OldValue, (IEnumerable) e.NewValue );
+            ( (ListSelector) d ).OnAvailableItemsSourcePropertyChangedEvent( (IEnumerable) e.OldValue, (IEnumerable?) e.NewValue );
         }
 
-        private void OnAvailableItemsSourcePropertyChangedEvent( IEnumerable oldValue, IEnumerable newValue )
+        private void OnAvailableItemsSourcePropertyChangedEvent( IEnumerable oldValue, IEnumerable? newValue )
         {
             var oldAvailableItemsSourceView = CollectionViewSource.GetDefaultView( oldValue );
             if( oldAvailableItemsSourceView != null )
@@ -188,7 +228,7 @@ namespace Utilities.DotNet.WPF.Controls
                 oldAvailableItemsSourceView.CollectionChanged -= OnAvailableItemsCollectionChangedEvent;
             }
 
-            RegenerateInternalAvailableItems( newValue.Cast<object>() );
+            RegenerateInternalAvailableItems( newValue?.Cast<object?>() );
 
             var newAvailableItemsSourceView = CollectionViewSource.GetDefaultView( newValue );
             if( newAvailableItemsSourceView != null )
@@ -248,10 +288,14 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
-        private void RegenerateInternalAvailableItems( IEnumerable<object> items )
+        private void RegenerateInternalAvailableItems( IEnumerable<object>? items )
         {
             m_internalAvailableItems.Clear();
-            m_internalAvailableItems.AddRange( items );
+            if( items != null )
+            {
+                m_internalAvailableItems.AddRange( items );
+
+            }
 
             PruneInvalidSelectedItems();
         }
