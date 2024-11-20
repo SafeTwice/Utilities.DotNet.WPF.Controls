@@ -217,10 +217,10 @@ namespace Utilities.DotNet.WPF.Controls
 
         private static void OnAvailableItemsSourcePropertyChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
         {
-            ( (ListSelector) d ).OnAvailableItemsSourcePropertyChangedEvent( (IEnumerable) e.OldValue, (IEnumerable?) e.NewValue );
+            ( (ListSelector) d ).OnAvailableItemsSourcePropertyChangedEvent( (IEnumerable?) e.OldValue, (IEnumerable?) e.NewValue );
         }
 
-        private void OnAvailableItemsSourcePropertyChangedEvent( IEnumerable oldValue, IEnumerable? newValue )
+        private void OnAvailableItemsSourcePropertyChangedEvent( IEnumerable? oldValue, IEnumerable? newValue )
         {
             var oldAvailableItemsSourceView = CollectionViewSource.GetDefaultView( oldValue );
             if( oldAvailableItemsSourceView != null )
@@ -228,7 +228,7 @@ namespace Utilities.DotNet.WPF.Controls
                 oldAvailableItemsSourceView.CollectionChanged -= OnAvailableItemsCollectionChangedEvent;
             }
 
-            RegenerateInternalAvailableItems( newValue?.Cast<object?>() );
+            RegenerateInternalAvailableItems( newValue?.Cast<object>() );
 
             var newAvailableItemsSourceView = CollectionViewSource.GetDefaultView( newValue );
             if( newAvailableItemsSourceView != null )
