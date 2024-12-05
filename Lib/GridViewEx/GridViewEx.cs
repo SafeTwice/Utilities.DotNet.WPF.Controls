@@ -2,7 +2,9 @@
 /// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
+using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -61,21 +63,35 @@ namespace Utilities.DotNet.WPF.Controls
         /// <inheritdoc/>
         protected override void PrepareItem( ListViewItem item )
         {
+            base.PrepareItem( item );
+
             if( AutoAdjustColumns )
             {
-                foreach( var column in Columns.Where( c => double.IsNaN( c.Width ) ) )
-                {
-                    column.Width = column.ActualWidth;
-                    column.Width = double.NaN;
-                }
+                // Adjustment of auto-sized columns must be delayed until the item is loaded, because
+                // at this point bindings are not setup properly and the auto-sizing would occur with
+                // this item controls set to default values.
+                item.Loaded += OnItemLoaded;
             }
 
             if( ScrollToAddedItems )
             {
                 item.BringIntoView();
             }
+        }
 
-            base.PrepareItem( item );
+        private void OnItemLoaded( object? sender, EventArgs e )
+        {
+            Debug.Assert( sender is ListViewItem );
+
+            var item = (ListViewItem) sender!;
+
+            item.Loaded -= OnItemLoaded;
+
+            foreach( var column in Columns.Where( c => double.IsNaN( c.Width ) ) )
+            {
+                column.Width = column.ActualWidth;
+                column.Width = double.NaN;
+            }
         }
     }
 }
