@@ -46,10 +46,17 @@ namespace Utilities.DotNet.WPF.Controls
             DefaultStyleKeyProperty.OverrideMetadata( typeof( DialogBase ), new FrameworkPropertyMetadata( typeof( DialogBase ) ) );
         }
 
+        /// <summary>
+        /// Constructor for dialogs not owned by a window.
+        /// </summary>
         public DialogBase() : this( null )
         {
         }
 
+        /// <summary>
+        /// Constructor for dialogs owned by a window.
+        /// </summary>
+        /// <param name="owner">Window that owns the dialog.</param>
         public DialogBase( Window? owner )
         {
             Owner = owner ?? Application.Current.MainWindow;
@@ -80,12 +87,32 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         //===========================================================================
+        //                            PROTECTED METHODS
+        //===========================================================================
+
+        /// <summary>
+        /// Called when the OK button is clicked.
+        /// </summary>
+        /// <remarks>
+        /// Override this method in derived classes to perform additional checks or processing before closing the dialog when
+        /// the OK button is pressed.
+        /// </remarks>
+        /// <returns><c>true</c> if the dialog is allowed to be closed; <c>false</c> to keep the dialog open.</returns>
+        protected virtual bool OnOkClick()
+        {
+            return true;
+        }
+
+        //===========================================================================
         //                            PRIVATE METHODS
         //===========================================================================
 
         private void OkButton_Click( object sender, RoutedEventArgs e )
         {
-            DialogResult = true;
+            if( OnOkClick() )
+            {
+                DialogResult = true;
+            }
         }
 
         //===========================================================================
