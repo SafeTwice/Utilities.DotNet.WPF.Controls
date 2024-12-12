@@ -22,7 +22,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public static readonly DependencyProperty WidthProperty =
             DependencyProperty.Register( nameof( Width ), typeof( GridLength ), typeof( AutoColumnDefinition ),
-                                         new PropertyMetadata( new GridLength( 1.0, GridUnitType.Star ) ) );
+                                         new PropertyMetadata( GridLength.Auto ) );
 
         /// <summary>
         /// Width of the column.

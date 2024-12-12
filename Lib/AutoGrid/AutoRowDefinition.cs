@@ -22,7 +22,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public static readonly DependencyProperty HeightProperty =
             DependencyProperty.Register( nameof( Height ), typeof( GridLength ), typeof( AutoRowDefinition ),
-                                         new PropertyMetadata( new GridLength( 1.0, GridUnitType.Star ) ) );
+                                         new PropertyMetadata( GridLength.Auto ) );
 
         /// <summary>
         /// Height of the row.
