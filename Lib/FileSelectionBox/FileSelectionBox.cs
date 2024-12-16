@@ -37,10 +37,16 @@ namespace Utilities.DotNet.WPF.Controls
         //                           PUBLIC PROPERTIES
         //===========================================================================
 
+        /// <summary>
+        /// Dependency property for the <see cref="Extension"/> property.
+        /// </summary>
         public static readonly DependencyProperty ExtensionProperty =
             DependencyProperty.Register( nameof( Extension ), typeof( string ), typeof( FileSelectionBox ),
                 new FrameworkPropertyMetadata( string.Empty ) );
 
+        /// <summary>
+        /// Gets or sets the default extension of the file to select (see <see cref="FileDialog.DefaultExt"/>).
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public string Extension
@@ -49,10 +55,17 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( ExtensionProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for the <see cref="Filter"/> property.
+        /// </summary>
         public static readonly DependencyProperty FilterProperty =
             DependencyProperty.Register( nameof( Filter ), typeof( string ), typeof( FileSelectionBox ),
                 new FrameworkPropertyMetadata( string.Empty ) );
 
+        /// <summary>
+        /// Gets or sets the filter string that determines what types of files are displayed in the file dialog
+        /// (see <see cref="FileDialog.Filter"/>).
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public string Filter
@@ -61,16 +74,56 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( FilterProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for the <see cref="ButtonPosition"/> property.
+        /// </summary>
         public static readonly DependencyProperty ButtonPositionProperty =
             DependencyProperty.Register( nameof( ButtonPosition ), typeof( EHorizontalPosition ), typeof( FileSelectionBox ),
                 new FrameworkPropertyMetadata( EHorizontalPosition.Right, FrameworkPropertyMetadataOptions.AffectsArrange ) );
 
+        /// <summary>
+        /// Gets or sets the position inside the control of the button to open the file selection dialog.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public EHorizontalPosition ButtonPosition
         {
             get => (EHorizontalPosition) GetValue( ButtonPositionProperty );
             set => SetValue( ButtonPositionProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for the <see cref="Command"/> property.
+        /// </summary>
+        public static readonly DependencyProperty CommandProperty =
+            DependencyProperty.Register( nameof( Command ), typeof( ICommand ), typeof( FileSelectionBox ) );
+
+        /// <summary>
+        /// Gets or sets the command to execute when a file is selected using the file dialog.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        public ICommand? Command
+        {
+            get => (ICommand) GetValue( CommandProperty );
+            set => SetValue( CommandProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for the <see cref="CommandParameter"/> property.
+        /// </summary>
+        public static readonly DependencyProperty CommandParameterProperty =
+            DependencyProperty.Register( nameof( CommandParameter ), typeof( object ), typeof( FileSelectionBox ) );
+
+        /// <summary>
+        /// Gets or sets the parameter to pass to the <see cref="Command"/>.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        public object? CommandParameter
+        {
+            get => GetValue( CommandParameterProperty );
+            set => SetValue( CommandParameterProperty, value );
         }
 
         //===========================================================================
@@ -274,6 +327,13 @@ namespace Utilities.DotNet.WPF.Controls
                 {
                     m_filenameTextBox.Focus();
                     m_filenameTextBox.Select( text.Length, 0 );
+                }
+
+                var command = Command;
+                var commandParameter = CommandParameter;
+                if( command?.CanExecute( commandParameter ) == true )
+                {
+                    command?.Execute( commandParameter );
                 }
             }
         }
