@@ -29,7 +29,9 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public enum EHorizontalPosition
         {
+            /// <summary>Left position.</summary>
             Left,
+            /// <summary>Right position.</summary>
             Right
         }
 
@@ -38,14 +40,14 @@ namespace Utilities.DotNet.WPF.Controls
         //===========================================================================
 
         /// <summary>
-        /// Dependency property for the <see cref="Extension"/> property.
+        /// Dependency property for <see cref="Extension"/>.
         /// </summary>
         public static readonly DependencyProperty ExtensionProperty =
             DependencyProperty.Register( nameof( Extension ), typeof( string ), typeof( FileSelectionBox ),
                 new FrameworkPropertyMetadata( string.Empty ) );
 
         /// <summary>
-        /// Gets or sets the default extension of the file to select (see <see cref="FileDialog.DefaultExt"/>).
+        /// Gets or sets the default file extension to use to filter the list of files that are displayed in the file dialog.
         /// </summary>
         [Bindable( true )]
         [Browsable( true )]
@@ -56,15 +58,14 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the <see cref="Filter"/> property.
+        /// Dependency property for <see cref="Filter"/>.
         /// </summary>
         public static readonly DependencyProperty FilterProperty =
             DependencyProperty.Register( nameof( Filter ), typeof( string ), typeof( FileSelectionBox ),
                 new FrameworkPropertyMetadata( string.Empty ) );
 
         /// <summary>
-        /// Gets or sets the filter string that determines what types of files are displayed in the file dialog
-        /// (see <see cref="FileDialog.Filter"/>).
+        /// Gets or sets the filter string that determines what types of files are displayed in the file dialog.
         /// </summary>
         [Bindable( true )]
         [Browsable( true )]
@@ -75,7 +76,7 @@ namespace Utilities.DotNet.WPF.Controls
         }
 
         /// <summary>
-        /// Dependency property for the <see cref="ButtonPosition"/> property.
+        /// Dependency property for <see cref="ButtonPosition"/>.
         /// </summary>
         public static readonly DependencyProperty ButtonPositionProperty =
             DependencyProperty.Register( nameof( ButtonPosition ), typeof( EHorizontalPosition ), typeof( FileSelectionBox ),
@@ -178,6 +179,7 @@ namespace Utilities.DotNet.WPF.Controls
         //                            PUBLIC METHODS
         //===========================================================================
 
+        /// <inheritdoc/>
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -199,19 +201,21 @@ namespace Utilities.DotNet.WPF.Controls
             TransferTextBoxProperties();
         }
 
-        protected override Size ArrangeOverride( Size finalSize )
+        //===========================================================================
+        //                            PROTECTED METHODS
+        //===========================================================================
+
+        /// <inheritdoc/>
+        protected override Size ArrangeOverride( Size arrangeBounds )
         {
-            var result = base.ArrangeOverride( finalSize );
+            var result = base.ArrangeOverride( arrangeBounds );
 
             Arrange();
 
             return result;
         }
 
-        //===========================================================================
-        //                            PROTECTED METHODS
-        //===========================================================================
-
+        /// <inheritdoc/>
         protected override void OnGotKeyboardFocus( KeyboardFocusChangedEventArgs e )
         {
             Debug.Print( $"FileSelectionBox.OnGotKeyboardFocus: {e.Handled} / {e.NewFocus} / {e.OldFocus}" );

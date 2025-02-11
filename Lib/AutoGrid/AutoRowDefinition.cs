@@ -110,6 +110,7 @@ namespace Utilities.DotNet.WPF.Controls
         //                            PROTECTED METHODS
         //===========================================================================
 
+        /// <inheritdoc/>
         protected override Freezable CreateInstanceCore()
         {
             return new AutoRowDefinition();

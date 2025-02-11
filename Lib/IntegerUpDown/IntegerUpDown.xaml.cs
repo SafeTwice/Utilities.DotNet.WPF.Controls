@@ -11,7 +11,7 @@ namespace Utilities.DotNet.WPF.Controls
     using ValueToTextFunc = Func<IntegerUpDown, int, string>;
 
     /// <summary>
-    /// Interaction logic for IntegerUpDown.xaml
+    /// Control for selecting an integer value.
     /// </summary>
     public partial class IntegerUpDown : UserControl, INotifyPropertyChanged
     {
@@ -21,11 +21,17 @@ namespace Utilities.DotNet.WPF.Controls
 
         #region Bindable Properties
 
+        /// <summary>
+        /// Dependency property for <see cref="Value"/>.
+        /// </summary>
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register( nameof( Value ), typeof( int ), typeof( IntegerUpDown ),
                 new FrameworkPropertyMetadata( 0, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     OnValueChangedEvent ) );
 
+        /// <summary>
+        /// Value of the control.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public int Value
@@ -34,10 +40,16 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( ValueProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="Minimum"/>.
+        /// </summary>
         public static readonly DependencyProperty MinimumProperty =
             DependencyProperty.Register( nameof( Minimum ), typeof( int ), typeof( IntegerUpDown ),
                 new FrameworkPropertyMetadata( 0, FrameworkPropertyMetadataOptions.AffectsRender, OnMinimumChangedEvent ) );
 
+        /// <summary>
+        /// Minimum value of the control.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public int Minimum
@@ -46,10 +58,16 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( MinimumProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="Maximum"/>.
+        /// </summary>
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register( nameof( Maximum ), typeof( int ), typeof( IntegerUpDown ),
                 new FrameworkPropertyMetadata( 1000, FrameworkPropertyMetadataOptions.AffectsRender, OnMaximumChangedEvent ) );
 
+        /// <summary>
+        /// Maximum value of the control.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public int Maximum
@@ -58,11 +76,17 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( MaximumProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="ValueToText"/>.
+        /// </summary>
         public static readonly DependencyProperty ValueToTextProperty =
             DependencyProperty.Register( nameof( ValueToText ), typeof( ValueToTextFunc ), typeof( IntegerUpDown ),
-                new FrameworkPropertyMetadata( new ValueToTextFunc( (o, v) => o.DefaultValueToText( v ) ),
+                new FrameworkPropertyMetadata( new ValueToTextFunc( ( _, v ) => DefaultValueToText( v ) ),
                     FrameworkPropertyMetadataOptions.AffectsRender, OnValueChangedEvent ) );
 
+        /// <summary>
+        /// Function to convert the value to a text representation.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public ValueToTextFunc ValueToText
@@ -75,6 +99,9 @@ namespace Utilities.DotNet.WPF.Controls
 
         #region Internal-use non-bindable properties
 
+        /// <summary>
+        /// Text representation of the value.
+        /// </summary>
         [Bindable( false )]
         [Browsable( false )]
         public string ValueText
@@ -87,10 +114,16 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
+        /// <summary>
+        /// Decorated text representation of the value.
+        /// </summary>
         [Bindable( false )]
         [Browsable( false )]
         public string DecoratedValueText { get; private set; } = string.Empty;
 
+        /// <summary>
+        /// Valid spin directions for the control.
+        /// </summary>
         [Bindable( false )]
         [Browsable( false )]
         public ValidSpinDirections ValidSpinDirection
@@ -116,6 +149,9 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
+        /// <summary>
+        /// Maximum length of the text representation of the value.
+        /// </summary>
         [Bindable( false )]
         [Browsable( false )]
         public int ValueMaxLength => CalculateMaxLength();
@@ -126,12 +162,16 @@ namespace Utilities.DotNet.WPF.Controls
         //                             PUBLIC EVENTS
         //===========================================================================
 
+        /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
         //===========================================================================
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public IntegerUpDown()
         {
             InitializeComponent();
@@ -143,7 +183,12 @@ namespace Utilities.DotNet.WPF.Controls
         //                            PUBLIC METHODS
         //===========================================================================
 
-        public string DefaultValueToText( int value )
+        /// <summary>
+        /// Converts the given value to a text representation.
+        /// </summary>
+        /// <param name="value">Value to convert.</param>
+        /// <returns>Text representation of the value.</returns>
+        public static string DefaultValueToText( int value )
         {
             return value.ToString();
         }

@@ -9,7 +9,7 @@ using System.Windows.Controls;
 namespace Utilities.DotNet.WPF.Controls
 {
     /// <summary>
-    /// <see cref="ContentControl"> with an overlaid <see cref="SlidingToolbar"/> than can be visible or hidden.
+    /// <see cref="ContentControl"/> with an overlaid <see cref="SlidingToolbar"/> than can be visible or hidden.
     /// </summary>
     [TemplatePart( Name = "PART_Toolbar", Type = typeof( SlidingToolbar ) )]
     public class ContentControlWithToolbar : HeaderedContentControl
@@ -93,6 +93,7 @@ namespace Utilities.DotNet.WPF.Controls
         //                            PUBLIC METHODS
         //===========================================================================
 
+        /// <inheritdoc/>
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -103,7 +104,7 @@ namespace Utilities.DotNet.WPF.Controls
             }
 
             m_toolbar = GetTemplateChild( "PART_Toolbar" ) as SlidingToolbar;
-            
+
             if( m_toolbar != null )
             {
                 OnIsHeaderVisibleChanged( IsHeaderVisible );

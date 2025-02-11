@@ -18,10 +18,16 @@ namespace Utilities.DotNet.WPF.Controls
         //                           PUBLIC PROPERTIES
         //===========================================================================
 
+        /// <summary>
+        /// Dependency property for <see cref="IsCloseButtonVisible"/>.
+        /// </summary>
         public static readonly DependencyProperty IsCloseButtonVisibleProperty =
             DependencyProperty.Register( nameof( IsCloseButtonVisible ), typeof( bool ), typeof( SlidingToolbar ),
                 new FrameworkPropertyMetadata( true, OnIsCloseButtonVisibleChanged ) );
 
+        /// <summary>
+        /// Indicates and sets if the close button is visible.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public bool IsCloseButtonVisible

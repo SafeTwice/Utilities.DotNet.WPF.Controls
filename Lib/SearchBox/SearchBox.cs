@@ -31,7 +31,9 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public enum EHorizontalPosition
         {
+            /// <summary>Left position.</summary>
             Left,
+            /// <summary>Right position.</summary>
             Right
         }
 
@@ -148,12 +150,12 @@ namespace Utilities.DotNet.WPF.Controls
         /// <remarks>
         /// <para>
         /// If this value is set to zero (or a negative number), then the automatic search history is disabled.
-        /// In this case, the history of searches can be manually managed by setting the <see cref="ItemsSource"/>
+        /// In this case, the history of searches can be manually managed by setting the <see cref="ItemsControl.ItemsSource"/>
         /// property to a collection of searched terms that the user must update manually.
         /// </para>
         /// <para>
         /// If this value is set to a positive number, the search history is automatically managed by the control.
-        /// In this case, setting the <see cref="ItemsSource"/> property is ignored.
+        /// In this case, setting the <see cref="ItemsControl.ItemsSource"/> property is ignored.
         /// </para>
         /// </remarks>
         [Bindable( true )]
@@ -378,6 +380,7 @@ namespace Utilities.DotNet.WPF.Controls
         //                            PROTECTED METHODS
         //===========================================================================
 
+        /// <inheritdoc/>
         protected override void OnGotKeyboardFocus( KeyboardFocusChangedEventArgs e )
         {
             if( !e.Handled && ( m_comboBox != null ) && ( e.NewFocus == this ) )
@@ -387,6 +390,7 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
+        /// <inheritdoc/>
         protected override Size ArrangeOverride( Size finalSize )
         {
             var result = base.ArrangeOverride( finalSize );
@@ -568,7 +572,7 @@ namespace Utilities.DotNet.WPF.Controls
 
         private static object CoerceItemsSource( DependencyObject d, object baseValue )
         {
-            if ( d is SearchBox searchBox )
+            if( d is SearchBox searchBox )
             {
                 return searchBox.CoerceItemsSource( baseValue );
             }

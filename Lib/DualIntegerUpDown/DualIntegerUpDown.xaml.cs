@@ -9,8 +9,17 @@ using Xceed.Wpf.Toolkit;
 namespace Utilities.DotNet.WPF.Controls
 {
     /// <summary>
-    /// Interaction logic for DualIntegerUpDown.xaml
+    /// Control for selecting an integer value displayed to the user as two values, one representing the value divided
+    /// by a factor and the other representing the remainder.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The value of the control corresponds to the following formula: Value = (UpperValue * Factor) + LowerValue
+    /// </para>
+    /// <para>
+    /// Correspondingly, UpperValue = Value / Factor and LowerValue = Value % Factor.
+    /// </para>
+    /// </remarks>
     public partial class DualIntegerUpDown : UserControl, INotifyPropertyChanged
     {
         //===========================================================================
@@ -19,11 +28,17 @@ namespace Utilities.DotNet.WPF.Controls
 
         #region Bindable Properties
 
+        /// <summary>
+        /// Dependency property for <see cref="Value"/>.
+        /// </summary>
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register( nameof( Value ), typeof( int ), typeof( DualIntegerUpDown ),
                 new FrameworkPropertyMetadata( 0, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     OnValueChangedEvent ) );
 
+        /// <summary>
+        /// Value of the control.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public int Value
@@ -32,10 +47,16 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( ValueProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="Minimum"/>.
+        /// </summary>
         public static readonly DependencyProperty MinimumProperty =
             DependencyProperty.Register( nameof( Minimum ), typeof( int ), typeof( DualIntegerUpDown ),
                 new FrameworkPropertyMetadata( 0, FrameworkPropertyMetadataOptions.AffectsRender, OnMinimumChangedEvent ) );
 
+        /// <summary>
+        /// Minimum value of the control.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public int Minimum
@@ -44,10 +65,16 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( MinimumProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="Maximum"/>.
+        /// </summary>
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register( nameof( Maximum ), typeof( int ), typeof( DualIntegerUpDown ),
                 new FrameworkPropertyMetadata( 1000, FrameworkPropertyMetadataOptions.AffectsRender, OnMaximumChangedEvent ) );
 
+        /// <summary>
+        /// Maximum value of the control.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public int Maximum
@@ -56,10 +83,19 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( MaximumProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="Factor"/>.
+        /// </summary>
         public static readonly DependencyProperty FactorProperty =
             DependencyProperty.Register( nameof( Factor ), typeof( int ), typeof( DualIntegerUpDown ),
                 new FrameworkPropertyMetadata( 10, FrameworkPropertyMetadataOptions.AffectsRender, OnFactorChangedEvent ) );
 
+        /// <summary>
+        /// Factor used to calculate <see cref="Value"/> from the two displayed values.
+        /// </summary>
+        /// <remarks>
+        /// <para>Value = (UpperValue * Factor) + LowerValue</para>
+        /// </remarks>
         [Bindable( true )]
         [Browsable( true )]
         public int Factor
@@ -68,10 +104,16 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( FactorProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="UpperLabel"/>.
+        /// </summary>
         public static readonly DependencyProperty UpperLabelProperty =
             DependencyProperty.Register( nameof( UpperLabel ), typeof( string ), typeof( DualIntegerUpDown ),
                 new FrameworkPropertyMetadata( string.Empty, FrameworkPropertyMetadataOptions.AffectsRender ) );
 
+        /// <summary>
+        /// Label for the upper value.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public string UpperLabel
@@ -80,10 +122,16 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( UpperLabelProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="LowerLabel"/>.
+        /// </summary>
         public static readonly DependencyProperty LowerLabelProperty =
             DependencyProperty.Register( nameof( LowerLabel ), typeof( string ), typeof( DualIntegerUpDown ),
                 new FrameworkPropertyMetadata( string.Empty, FrameworkPropertyMetadataOptions.AffectsRender ) );
 
+        /// <summary>
+        /// Label for the lower value.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public string LowerLabel
@@ -92,11 +140,17 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( LowerLabelProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="UpperValueWidth"/>.
+        /// </summary>
         public static readonly DependencyProperty UpperValueWidthProperty =
             DependencyProperty.Register( nameof( UpperValueWidth ), typeof( GridLength ), typeof( DualIntegerUpDown ),
                 new FrameworkPropertyMetadata( new GridLength( 1.0, GridUnitType.Star ),
                     FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure ) );
 
+        /// <summary>
+        /// Width of the upper value text box.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public GridLength UpperValueWidth
@@ -105,11 +159,17 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( UpperValueWidthProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="LowerValueWidth"/>.
+        /// </summary>
         public static readonly DependencyProperty LowerValueWidthProperty =
             DependencyProperty.Register( nameof( LowerValueWidth ), typeof( GridLength ), typeof( DualIntegerUpDown ),
                 new FrameworkPropertyMetadata( new GridLength( 1.0, GridUnitType.Star ),
                     FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure ) );
 
+        /// <summary>
+        /// Width of the lower value text box.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public GridLength LowerValueWidth
@@ -118,11 +178,17 @@ namespace Utilities.DotNet.WPF.Controls
             set => SetValue( LowerValueWidthProperty, value );
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="ValueFontSize"/>.
+        /// </summary>
         public static readonly DependencyProperty ValueFontSizeProperty =
             DependencyProperty.Register( nameof( ValueFontSize ), typeof( double ), typeof( DualIntegerUpDown ),
                 new FrameworkPropertyMetadata( FontSizeProperty.DefaultMetadata.DefaultValue,
                     FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure ) );
 
+        /// <summary>
+        /// Font size of the upper and lower value text boxes.
+        /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         public double ValueFontSize
@@ -135,6 +201,9 @@ namespace Utilities.DotNet.WPF.Controls
 
         #region Internal-use non-bindable properties
 
+        /// <summary>
+        /// Text representation of the upper value.
+        /// </summary>
         [Bindable( false )]
         [Browsable( false )]
         public string UpperValueText
@@ -147,6 +216,9 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
+        /// <summary>
+        /// Text representation of the lower value.
+        /// </summary>
         [Bindable( false )]
         [Browsable( false )]
         public string LowerValueText
@@ -159,6 +231,9 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
+        /// <summary>
+        /// Valid spin directions for the control.
+        /// </summary>
         [Bindable( false )]
         [Browsable( false )]
         public ValidSpinDirections ValidSpinDirection
@@ -184,10 +259,16 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
+        /// <summary>
+        /// Maximum length of the upper value text box.
+        /// </summary>
         [Bindable( false )]
         [Browsable( false )]
         public int UpperValueMaxLength => (int) Math.Ceiling( Math.Log10( Maximum / Factor ) );
 
+        /// <summary>
+        /// Maximum length of the lower value text box.
+        /// </summary>
         [Bindable( false )]
         [Browsable( false )]
         public int LowerValueMaxLength => (int) Math.Ceiling( Math.Log10( Factor ) );
@@ -198,12 +279,16 @@ namespace Utilities.DotNet.WPF.Controls
         //                             PUBLIC EVENTS
         //===========================================================================
 
+        /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
 
         //===========================================================================
         //                          PUBLIC CONSTRUCTORS
         //===========================================================================
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public DualIntegerUpDown()
         {
             InitializeComponent();
