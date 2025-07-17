@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System.Collections;
@@ -26,30 +26,30 @@ namespace Utilities.DotNet.WPF.Controls
         //===========================================================================
 
         /// <summary>
-        /// Dependency property for the <see cref="AvailableHeaderText"/> property.
+        /// Dependency property for the <see cref="UnselectedItemsHeaderText"/> property.
         /// </summary>
-        public static readonly DependencyProperty AvailableHeaderTextProperty =
-            DependencyProperty.Register( nameof( AvailableHeaderText ), typeof( string ), typeof( ListSelector ),
-                new FrameworkPropertyMetadata( "Available" ) );
+        public static readonly DependencyProperty UnselectedItemsHeaderTextProperty =
+            DependencyProperty.Register( nameof( UnselectedItemsHeaderText ), typeof( string ), typeof( ListSelector ),
+                new FrameworkPropertyMetadata( "Unselected" ) );
 
         /// <summary>
-        /// Header text for the list of available items.
+        /// Header text for the list of unselected items.
         /// </summary>
         [Bindable( true )]
         [Browsable( true )]
         [Category( "Common" )]
-        [DefaultValue( "Available" )]
-        public string AvailableHeaderText
+        [DefaultValue( "Unselected" )]
+        public string UnselectedItemsHeaderText
         {
-            get => (string) GetValue( AvailableHeaderTextProperty );
-            set => SetValue( AvailableHeaderTextProperty, value );
+            get => (string) GetValue( UnselectedItemsHeaderTextProperty );
+            set => SetValue( UnselectedItemsHeaderTextProperty, value );
         }
 
         /// <summary>
-        /// Dependency property for the <see cref="SelectedHeaderText"/> property.
+        /// Dependency property for the <see cref="SelectedItemsHeaderText"/> property.
         /// </summary>
-        public static readonly DependencyProperty SelectedHeaderTextProperty =
-            DependencyProperty.Register( nameof( SelectedHeaderText ), typeof( string ), typeof( ListSelector ),
+        public static readonly DependencyProperty SelectedItemsHeaderTextProperty =
+            DependencyProperty.Register( nameof( SelectedItemsHeaderText ), typeof( string ), typeof( ListSelector ),
                 new FrameworkPropertyMetadata( "Selected" ) );
 
         /// <summary>
@@ -59,10 +59,10 @@ namespace Utilities.DotNet.WPF.Controls
         [Browsable( true )]
         [Category( "Common" )]
         [DefaultValue( "Selected" )]
-        public string SelectedHeaderText
+        public string SelectedItemsHeaderText
         {
-            get => (string) GetValue( SelectedHeaderTextProperty );
-            set => SetValue( SelectedHeaderTextProperty, value );
+            get => (string) GetValue( SelectedItemsHeaderTextProperty );
+            set => SetValue( SelectedItemsHeaderTextProperty, value );
         }
 
         /// <summary>
@@ -75,6 +75,11 @@ namespace Utilities.DotNet.WPF.Controls
         /// <summary>
         /// Sequence of the items that can be selected.
         /// </summary>
+        /// <remarks>
+        /// The available items collection is not modified by the control. If the collection is observable, new items added
+        /// will automatically appear in the unselected items list and items removed will be automatically removed from the 
+        /// unselected or selected items list.
+        /// </remarks>
         [Bindable( true )]
         [Browsable( true )]
         [Category( "Common" )]
@@ -94,6 +99,16 @@ namespace Utilities.DotNet.WPF.Controls
         /// <summary>
         /// Collection of the items that have been selected.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The selected items collection is modified by the control. Additionally, if the collection is observable, new items added
+        /// will automatically appear in the selected items list (only if they also belong to <see cref="AvailableItemsSource"/>) 
+        /// and items removed will be automatically removed from the selected items list.
+        /// </para>
+        /// <para>
+        /// This collection will always be a subset of the <see cref="AvailableItemsSource"/> collection.
+        /// </para>
+        /// </remarks>
         [Bindable( true )]
         [Browsable( true )]
         [Category( "Common" )]
@@ -148,25 +163,45 @@ namespace Utilities.DotNet.WPF.Controls
 
             ( (FrameworkElement) Content ).DataContext = this;
 
-            InternalAvailableItems = m_internalAvailableItems;
+            UnselectedItemsSource = m_internalAvailableItems;
 
-            InternalAvailableItemsView.Filter = item => !SelectedItemsSource?.Contains( item ) ?? true;
+            UnselectedItemsView.Filter = ( item => !SelectedItemsSource?.Contains( item ) ?? true );
+        }
+
+        //===========================================================================
+        //                            PUBLIC METHODS
+        //===========================================================================
+
+        /// <summary>
+        /// Selects all available items, adding them to the selected items.
+        /// </summary>
+        public void SelectAll()
+        {
+            SelectedItemsSource?.AddRange( UnselectedItemsView );
+        }
+
+        /// <summary>
+        /// Unselects all selected items, removing them from the selected items.
+        /// </summary>
+        public void UnselectAll()
+        {
+            SelectedItemsSource?.Clear();
         }
 
         //===========================================================================
         //                          INTERNAL PROPERTIES
         //===========================================================================
 
-        private static readonly DependencyPropertyKey InternalAvailableItemsPropertyKey =
-            DependencyProperty.RegisterReadOnly( nameof( InternalAvailableItems ), typeof( IObservableReadOnlyList<object> ), typeof( ListSelector ),
+        internal static readonly DependencyPropertyKey UnselectedItemsSourcePropertyKey =
+            DependencyProperty.RegisterReadOnly( nameof( UnselectedItemsSource ), typeof( IObservableReadOnlyList<object> ), typeof( ListSelector ),
                 new FrameworkPropertyMetadata( null ) );
 
         [Bindable( false )]
         [Browsable( false )]
-        private IObservableReadOnlyList<object> InternalAvailableItems
+        internal IObservableReadOnlyList<object?> UnselectedItemsSource
         {
-            get => (IObservableReadOnlyList<object>) GetValue( InternalAvailableItemsPropertyKey.DependencyProperty );
-            set => SetValue( InternalAvailableItemsPropertyKey, value );
+            get => (IObservableReadOnlyList<object?>) GetValue( UnselectedItemsSourcePropertyKey.DependencyProperty );
+            set => SetValue( UnselectedItemsSourcePropertyKey, value );
         }
 
         //===========================================================================
@@ -175,37 +210,29 @@ namespace Utilities.DotNet.WPF.Controls
 
         private void OnUnselectAll( object sender, RoutedEventArgs e )
         {
-            SelectedItemsSource?.Clear();
-
-            InternalAvailableItemsView.Refresh();
+            UnselectAll();
         }
 
         private void OnSelectAll( object sender, RoutedEventArgs e )
         {
-            SelectedItemsSource?.AddRange( InternalAvailableItemsView );
-
-            InternalAvailableItemsView.Refresh();
+            SelectAll();
         }
 
         private void OnSelect( object sender, RoutedEventArgs e )
         {
-            var selectedElements = AvailableListBox.SelectedItems.Cast<object>().ToArray();
+            var selectedElements = UnselectedListBox.SelectedItems.Cast<object?>().ToArray();
 
             SelectedItemsSource?.AddRange( selectedElements );
-
-            InternalAvailableItemsView.Refresh();
         }
 
         private void OnUnselect( object sender, RoutedEventArgs e )
         {
-            var selectedElements = SelectedListBox.SelectedItems.Cast<object>().ToArray();
+            var selectedElements = SelectedListBox.SelectedItems.Cast<object?>().ToArray();
 
             SelectedItemsSource?.RemoveRange( selectedElements );
-
-            InternalAvailableItemsView.Refresh();
         }
 
-        private void AvailableListBox_OnMouseDoubleClick( object sender, MouseButtonEventArgs e )
+        private void UnselectedListBox_OnMouseDoubleClick( object sender, MouseButtonEventArgs e )
         {
             OnSelect( sender, e );
         }
@@ -228,7 +255,7 @@ namespace Utilities.DotNet.WPF.Controls
                 oldAvailableItemsSourceView.CollectionChanged -= OnAvailableItemsCollectionChangedEvent;
             }
 
-            RegenerateInternalAvailableItems( newValue?.Cast<object>() );
+            RegenerateInternalAvailableItems( newValue?.Cast<object?>() );
 
             var newAvailableItemsSourceView = CollectionViewSource.GetDefaultView( newValue );
             if( newAvailableItemsSourceView != null )
@@ -244,36 +271,38 @@ namespace Utilities.DotNet.WPF.Controls
                 case NotifyCollectionChangedAction.Add:
                     if( e.NewItems != null )
                     {
-                        m_internalAvailableItems.AddRange( e.NewItems.Cast<object>() );
+                        m_internalAvailableItems.AddRange( e.NewItems.Cast<object?>() );
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
                     if( e.OldItems != null )
                     {
-                        m_internalAvailableItems.RemoveRange( e.OldItems.Cast<object>() );
+                        m_internalAvailableItems.RemoveRange( e.OldItems.Cast<object?>() );
 
                         PruneInvalidSelectedItems();
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
-                    if( e.OldItems != null )
+                    if( ( e.OldItems != null ) && ( e.NewItems != null ) )
                     {
-                        m_internalAvailableItems.RemoveRange( e.OldItems.Cast<object>() );
+                        if( ( e.NewItems.Count != 1 ) || ( e.OldItems.Count != 1 ) )
+                        {
+                            throw new System.NotSupportedException( "Moving multiple items is not supported." );
+                        }
+
+                        m_internalAvailableItems.Replace( e.OldItems[ 0 ], e.NewItems[ 0 ] );
+                        SelectedItemsSource?.Replace( e.OldItems[ 0 ], e.NewItems[ 0 ] );
 
                         PruneInvalidSelectedItems();
-                    }
-                    if( e.NewItems != null )
-                    {
-                        m_internalAvailableItems.AddRange( e.NewItems.Cast<object>() );
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Move:
                     if( e.NewItems != null )
                     {
-                        if( e.NewItems.Count > 0 )
+                        if( e.NewItems.Count > 1 )
                         {
                             throw new System.NotSupportedException( "Moving multiple items is not supported." );
                         }
@@ -283,18 +312,18 @@ namespace Utilities.DotNet.WPF.Controls
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    RegenerateInternalAvailableItems( ( (IEnumerable) sender! ).Cast<object>() );
+                    RegenerateInternalAvailableItems( ( (IEnumerable) sender! ).Cast<object?>() );
                     break;
             }
         }
 
-        private void RegenerateInternalAvailableItems( IEnumerable<object>? items )
+        private void RegenerateInternalAvailableItems( IEnumerable<object?>? items )
         {
             m_internalAvailableItems.Clear();
+
             if( items != null )
             {
                 m_internalAvailableItems.AddRange( items );
-
             }
 
             PruneInvalidSelectedItems();
@@ -304,7 +333,7 @@ namespace Utilities.DotNet.WPF.Controls
         {
             if( SelectedItemsSource != null )
             {
-                var invalidSelectedItems = SelectedItemsSource.Cast<object>().Where( item => !m_internalAvailableItems.Contains( item ) ).ToList();
+                var invalidSelectedItems = SelectedItemsSource.Cast<object?>().Where( item => !m_internalAvailableItems.Contains( item ) ).ToList();
 
                 SelectedItemsSource.RemoveRange( invalidSelectedItems );
             }
@@ -312,26 +341,54 @@ namespace Utilities.DotNet.WPF.Controls
 
         private static void OnSelectedItemsSourcePropertyChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
         {
-            ( (ListSelector) d ).OnSelectedItemsSourcePropertyChangedEvent();
+            ( (ListSelector) d ).OnSelectedItemsSourcePropertyChangedEvent( (IEnumerable?) e.OldValue, (IEnumerable?) e.NewValue );
         }
 
-        private void OnSelectedItemsSourcePropertyChangedEvent()
+        private void OnSelectedItemsSourcePropertyChangedEvent( IEnumerable? oldValue, IEnumerable? newValue )
         {
+            var oldSelectedItemsSourceView = CollectionViewSource.GetDefaultView( oldValue );
+            if( oldSelectedItemsSourceView != null )
+            {
+                oldSelectedItemsSourceView.CollectionChanged -= OnSelectedItemsCollectionChangedEvent;
+            }
+
             PruneInvalidSelectedItems();
 
-            InternalAvailableItemsView.Refresh();
+            UnselectedItemsView.Refresh();
+
+            var newSelectedItemsSourceView = CollectionViewSource.GetDefaultView( newValue );
+            if( newSelectedItemsSourceView != null )
+            {
+                newSelectedItemsSourceView.CollectionChanged += OnSelectedItemsCollectionChangedEvent;
+            }
+        }
+
+        private void OnSelectedItemsCollectionChangedEvent( object? sender, NotifyCollectionChangedEventArgs e )
+        {
+            switch( e.Action )
+            {
+                case NotifyCollectionChangedAction.Add:
+                case NotifyCollectionChangedAction.Replace:
+                    PruneInvalidSelectedItems();
+                    break;
+
+                default:
+                    break;
+            }
+
+            UnselectedItemsView.Refresh();
         }
 
         //===========================================================================
         //                           PRIVATE PROPERTIES
         //===========================================================================
 
-        private ICollectionView InternalAvailableItemsView => CollectionViewSource.GetDefaultView( InternalAvailableItems );
+        private ICollectionView UnselectedItemsView => CollectionViewSource.GetDefaultView( UnselectedItemsSource );
 
         //===========================================================================
         //                           PRIVATE ATTRIBUTES
         //===========================================================================
 
-        private readonly ObservableList<object> m_internalAvailableItems = new();
+        private readonly ObservableList<object?> m_internalAvailableItems = new();
     }
 }

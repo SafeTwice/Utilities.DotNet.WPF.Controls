@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Utilities.DotNet.Collections.Observables;
@@ -38,12 +39,42 @@ namespace Utilities.DotNet.WPF.Controls.Demo
 
         public bool IsAvailableItemsFilterEnabled { get; set; } = false;
 
+        public string LogText { get; private set; } = string.Empty;
+
         public ListSelectorDemo()
         {
             InitializeComponent();
+
+            SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
         }
 
-        // Called by Fody/PropertyChanged
+        private void SelectedItems_CollectionChanged( object? sender, NotifyCollectionChangedEventArgs e )
+        {
+            switch( e.Action )
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach( var item in e.NewItems!.Cast<DemoItem>() )
+                    {
+                        LogText = $"Selected {item.Name}\n" + LogText;
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    foreach( var item in e.OldItems!.Cast<DemoItem>() )
+                    {
+                        LogText = $"Unselected {item.Name}\n" + LogText;
+                    }
+                    break;
+
+                default:
+                    LogText = $"Unsupported action {e.Action}\n" + LogText;
+                    break;
+            }
+        }
+
+
+#pragma warning disable S1144, IDE0051 // Called by Fody/PropertyChanged
+
         private void OnIsAvailableItemsOrderEnabledChanged()
         {
             AvailableItemsView.SortDescriptions.Clear();
@@ -53,7 +84,6 @@ namespace Utilities.DotNet.WPF.Controls.Demo
             }
         }
 
-        // Called by Fody/PropertyChanged
         private void OnIsSelectedItemsOrderEnabledChanged()
         {
             SelectedItemsView.SortDescriptions.Clear();
@@ -63,7 +93,6 @@ namespace Utilities.DotNet.WPF.Controls.Demo
             }
         }
 
-        // Called by Fody/PropertyChanged
         private void OnIsAvailableItemsFilterEnabledChanged()
         {
             AvailableItemsView.Filter = null;
@@ -72,6 +101,8 @@ namespace Utilities.DotNet.WPF.Controls.Demo
                 AvailableItemsView.Filter = item => ( ( ( (DemoItem) item ).Id % 2 ) == 1 );
             }
         }
+
+#pragma warning restore S1144, IDE0051
 
         private ICollectionView AvailableItemsView => CollectionViewSource.GetDefaultView( AvailableItems );
         private ICollectionView SelectedItemsView => CollectionViewSource.GetDefaultView( SelectedItems );

@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type local:MainWindow}}"
         KeyDown="Window_OnKeyDown"
-        Title="Utilities.DotNet.WPF.Controls Demo" Height="450" Width="800" MinHeight="300" MinWidth="400">
+        Title="Utilities.DotNet.WPF.Controls Demo" Height="600" Width="800" MinHeight="500" MinWidth="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>

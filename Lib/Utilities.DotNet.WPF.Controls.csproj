@@ -29,8 +29,8 @@
   <ItemGroup>
     <PackageReference Include="DotNetProjects.Extended.Wpf.Toolkit" Version="5.0.124" />
     <PackageReference Include="Utilities.DotNet" Version="1.5-rc1" />
-    <PackageReference Include="Utilities.DotNet.Collections" Version="1.5-rc1" />
-    <PackageReference Include="Utilities.DotNet.WPF" Version="1.3-rc1" />
+    <PackageReference Include="Utilities.DotNet.Collections" Version="1.5.0-rc2" />
+    <PackageReference Include="Utilities.DotNet.WPF" Version="1.3.0-rc7" />
   </ItemGroup>
 
   <ItemGroup>

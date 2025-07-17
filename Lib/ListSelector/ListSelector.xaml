@@ -23,11 +23,11 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Column="0" Header="{Binding AvailableHeaderText}" Padding="4">
-            <ListBox x:Name="AvailableListBox"
-                     ItemsSource="{Binding InternalAvailableItems}" d:ItemsSource="{d:SampleData ItemCount=3}"
+        <GroupBox Grid.Column="0" Header="{Binding UnselectedItemsHeaderText}" d:Header="Unselected" Padding="4">
+            <ListBox x:Name="UnselectedListBox"
+                     ItemsSource="{Binding UnselectedItemsSource}" d:ItemsSource="{d:SampleData ItemCount=3}"
                      ItemTemplate="{Binding ItemTemplate}" ItemTemplateSelector="{Binding ItemTemplateSelector}"
-                     MouseDoubleClick="AvailableListBox_OnMouseDoubleClick"
+                     MouseDoubleClick="UnselectedListBox_OnMouseDoubleClick"
                      SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
         </GroupBox>
 
@@ -64,7 +64,7 @@
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource SelectionButton}">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding HasItems, ElementName=AvailableListBox}" Value="False">
+                            <DataTrigger Binding="{Binding HasItems, ElementName=UnselectedListBox}" Value="False">
                                 <Setter Property="IsEnabled" Value="False"/>
                             </DataTrigger>
                         </Style.Triggers>
@@ -79,7 +79,7 @@
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource SelectionButton}">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding HasItems, ElementName=AvailableListBox}" Value="False">
+                            <DataTrigger Binding="{Binding HasItems, ElementName=UnselectedListBox}" Value="False">
                                 <Setter Property="IsEnabled" Value="False"/>
                             </DataTrigger>
                         </Style.Triggers>
@@ -88,7 +88,7 @@
             </Button>
         </StackPanel>
 
-        <GroupBox Grid.Column="2" Header="{Binding SelectedHeaderText}" Padding="4">
+        <GroupBox Grid.Column="2" Header="{Binding SelectedItemsHeaderText}" d:Header="Selected" Padding="4">
             <ListBox x:Name="SelectedListBox"
                      ItemsSource="{Binding SelectedItemsSource}" d:ItemsSource="{d:SampleData ItemCount=3}"
                      ItemTemplate="{Binding ItemTemplate}" ItemTemplateSelector="{Binding ItemTemplateSelector}"

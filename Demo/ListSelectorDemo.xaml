@@ -14,6 +14,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
                 <controls:ListSelector Grid.Row="0" Margin="5"
@@ -44,6 +45,12 @@
                     </controls:AutoGrid>
                 </GroupBox>
 
+                <GroupBox Grid.Row="2" Header="Log" HorizontalAlignment="Center" Padding="5" Margin="0,10,0,0">
+                    <TextBox Text="{Binding LogText, Mode=OneWay}" IsReadOnly="True"
+                             MinLines="5" MaxLines="5"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             Width="400"/>
+                </GroupBox>
             </Grid>
         </Border>
     </Grid>
