@@ -7,6 +7,8 @@ namespace Utilities.DotNet.WPF.Controls.Demo
         public SampleDialog( Window owner ) : base( owner )
         {
             InitializeComponent();
+
+            DataContext = this;
         }
     }
 }

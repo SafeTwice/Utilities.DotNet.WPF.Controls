@@ -7,8 +7,11 @@
         xmlns:controls="clr-namespace:Utilities.DotNet.WPF.Controls;assembly=Utilities.DotNet.WPF.Controls"
         xmlns:local="clr-namespace:Utilities.DotNet.WPF.Controls.Demo"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance local:SampleDialog}"
         Title="SampleDialog" Height="350" Width="600">
-    <Grid>
-        <TextBlock Text="Sample Text" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-    </Grid>
+    <controls:AutoGrid AutoColumns="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <TextBlock Text="Sample Text" HorizontalAlignment="Center" Margin="10"/>
+        <CheckBox Content="Enable OK button" HorizontalAlignment="Center" Margin="10"
+                  IsChecked="{Binding IsOkButtonEnabled}" />
+    </controls:AutoGrid>
 </controls:DialogBase>

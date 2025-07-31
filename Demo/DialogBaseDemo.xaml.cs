@@ -12,7 +12,11 @@ namespace Utilities.DotNet.WPF.Controls.Demo
 
         public string Result { get; private set; } = "No result yet...";
 
-        public bool IsOkEnabled { get; set; } = true;
+        public bool IsOkButtonEnabled { get; set; } = true;
+
+        public string OkButtonContent { get; set; } = string.Empty;
+
+        public string CancelButtonContent { get; set; } = string.Empty;
 
         public DialogBaseDemo()
         {
@@ -24,7 +28,17 @@ namespace Utilities.DotNet.WPF.Controls.Demo
         private void ShowDialog()
         {
             var dialog = new SampleDialog( Window.GetWindow( this ) );
-            dialog.IsOkEnabled = IsOkEnabled;
+            dialog.IsOkButtonEnabled = IsOkButtonEnabled;
+
+            if( !string.IsNullOrEmpty( OkButtonContent ) )
+            {
+                dialog.OkButtonContent = OkButtonContent;
+            }
+
+            if( !string.IsNullOrEmpty( CancelButtonContent ) )
+            {
+                dialog.CancelButtonContent = CancelButtonContent;
+            }
 
             var result = dialog.ShowDialog();
 

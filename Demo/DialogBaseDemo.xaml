@@ -24,9 +24,17 @@
                 <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5" Margin="0,20,0,0">
                     <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
 
-                        <TextBlock Text="IsOkEnabled" Style="{StaticResource Settings.Label}"/>
-                        <CheckBox IsChecked="{Binding IsOkEnabled}"
+                        <TextBlock Text="IsOkButtonEnabled" Style="{StaticResource Settings.Label}"/>
+                        <CheckBox IsChecked="{Binding IsOkButtonEnabled}"
                                   Style="{DynamicResource Settings.CheckBox}"/>
+
+                        <TextBlock Text="OkButtonContent" Style="{StaticResource Settings.Label}"/>
+                        <TextBox Text="{Binding OkButtonContent}" Width="150" Height="24"
+                                 Style="{DynamicResource Settings.TextBox}"/>
+
+                        <TextBlock Text="CancelButtonContent" Style="{StaticResource Settings.Label}"/>
+                        <TextBox Text="{Binding CancelButtonContent}" Width="150" Height="24"
+                                 Style="{DynamicResource Settings.TextBox}"/>
 
                     </controls:AutoGrid>
                 </GroupBox>

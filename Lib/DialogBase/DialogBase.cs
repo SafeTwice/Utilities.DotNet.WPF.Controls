@@ -1,5 +1,5 @@
 ﻿/// @file
-/// @copyright  Copyright (c) 2024 SafeTwice S.L. All rights reserved.
+/// @copyright  Copyright (c) 2024-2025 SafeTwice S.L. All rights reserved.
 /// @license    See LICENSE.txt
 
 using System.ComponentModel;
@@ -19,22 +19,60 @@ namespace Utilities.DotNet.WPF.Controls
         //===========================================================================
 
         /// <summary>
-        /// Dependency property for <see cref="IsOkEnabled"/>.
+        /// Dependency property for <see cref="IsOkButtonEnabled"/>.
         /// </summary>
-        public static readonly DependencyProperty IsOkEnabledProperty =
-            DependencyProperty.Register( nameof( IsOkEnabled ), typeof( bool ), typeof( DialogBase ),
+        public static readonly DependencyProperty IsOkButtonEnabledProperty =
+            DependencyProperty.Register( nameof( IsOkButtonEnabled ), typeof( bool ), typeof( DialogBase ),
                 new FrameworkPropertyMetadata( true ) );
 
         /// <summary>
-        /// Indicating whether the OK button is enabled.
+        /// Gets or sets whether the OK button is enabled.
         /// </summary>
         [Bindable( true )]
         [Browsable( true )]
-        [Description( "Indicates whether the OK button is enabled." )]
-        public bool IsOkEnabled
+        [Description( "Gets or sets whether the OK button is enabled." )]
+        public bool IsOkButtonEnabled
         {
-            get => (bool) GetValue( IsOkEnabledProperty );
-            set => SetValue( IsOkEnabledProperty, value );
+            get => (bool) GetValue( IsOkButtonEnabledProperty );
+            set => SetValue( IsOkButtonEnabledProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for <see cref="OkButtonContent"/>.
+        /// </summary>
+        public static readonly DependencyProperty OkButtonContentProperty =
+            DependencyProperty.Register( nameof( OkButtonContent ), typeof( object ), typeof( DialogBase ),
+                new FrameworkPropertyMetadata( "OK" ) );
+
+        /// <summary>
+        /// Content of the OK button.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        [Description( "Content of the OK button." )]
+        public object OkButtonContent
+        {
+            get => GetValue( OkButtonContentProperty );
+            set => SetValue( OkButtonContentProperty, value );
+        }
+
+        /// <summary>
+        /// Dependency property for <see cref="CancelButtonContent"/>.
+        /// </summary>
+        public static readonly DependencyProperty CancelButtonContentProperty =
+            DependencyProperty.Register( nameof( CancelButtonContent ), typeof( object ), typeof( DialogBase ),
+                new FrameworkPropertyMetadata( "Cancel" ) );
+
+        /// <summary>
+        /// Content of the Cancel button.
+        /// </summary>
+        [Bindable( true )]
+        [Browsable( true )]
+        [Description( "Content of the Cancel button." )]
+        public object CancelButtonContent
+        {
+            get => GetValue( CancelButtonContentProperty );
+            set => SetValue( CancelButtonContentProperty, value );
         }
 
         //===========================================================================

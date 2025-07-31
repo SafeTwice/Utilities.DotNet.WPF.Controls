@@ -31,13 +31,13 @@
                                         </Grid.ColumnDefinitions>
                                         <Button x:Name="PART_OkButton"
                                                 Grid.Column="0" 
-                                                Content="OK"
+                                                Content="{TemplateBinding OkButtonContent}"
                                                 Margin="5"
                                                 Padding="20,3"
-                                                IsEnabled="{TemplateBinding IsOkEnabled}"
+                                                IsEnabled="{TemplateBinding IsOkButtonEnabled}"
                                                 IsDefault="True"/>
                                         <Button Grid.Column="1"
-                                                Content="Cancel"
+                                                Content="{TemplateBinding CancelButtonContent}"
                                                 Margin="5"
                                                 Padding="20,3"
                                                 IsCancel="True"/>
