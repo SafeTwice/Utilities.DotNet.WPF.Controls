@@ -22,8 +22,8 @@
     <UseWPF>true</UseWPF>
     <LangVersion>10</LangVersion>
     <NoWarn>CS1587</NoWarn>
-    <Version>1.2-rc4</Version>
-    <AssemblyVersion>1.1.1.103</AssemblyVersion>
+    <Version>1.2-rc5</Version>
+    <AssemblyVersion>1.2.0.5</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
