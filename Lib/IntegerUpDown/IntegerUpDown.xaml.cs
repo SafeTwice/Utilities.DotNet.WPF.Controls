@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -236,7 +236,7 @@ namespace Utilities.DotNet.WPF.Controls
 
         private void OnValuePreviewTextInput( object sender, TextCompositionEventArgs e )
         {
-            if( !CheckIsValidText( e.Text ) )
+            if( !CheckIsValidText( e.Text, ( (TextBox) sender ).CaretIndex ) )
             {
                 e.Handled = true;
             }
@@ -343,15 +343,42 @@ namespace Utilities.DotNet.WPF.Controls
             return int.Parse( text );
         }
 
-        private bool CheckIsValidText( string text )
+        private bool CheckIsValidText( string text, int insertionIndex )
         {
             if( Minimum < 0 )
             {
-                return SINT_INPUT_REGEX.IsMatch( text );
+                bool hasMinus = ValueText.StartsWith( "-" );
+
+                for( int i = 0; i < text.Length; i++ )
+                {
+                    var inputChar = text[ i ];
+
+                    if( char.IsDigit( inputChar ) &&
+                        ( !hasMinus || ( ( insertionIndex + i ) > 0 ) ) )
+                    {
+                        continue;
+                    }
+
+                    if( inputChar != '-' )
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        if( ( insertionIndex + i ) > 0 )
+                        {
+                            return false;
+                        }
+
+                        hasMinus = true;
+                    }
+                }
+
+                return true;
             }
             else
             {
-                return UINT_INPUT_REGEX.IsMatch( text );
+                return text.All( char.IsDigit );
             }
         }
 
@@ -392,13 +419,6 @@ namespace Utilities.DotNet.WPF.Controls
 
             return ( 1 + Math.Max( minimumMagnitude, maximumMagnitude ) );
         }
-
-        //===========================================================================
-        //                           PRIVATE CONSTANTS
-        //===========================================================================
-
-        private static readonly Regex UINT_INPUT_REGEX = new( @"^\d*$" );
-        private static readonly Regex SINT_INPUT_REGEX = new( @"^[-\d]*$" );
 
         //===========================================================================
         //                           PRIVATE ATTRIBUTES
