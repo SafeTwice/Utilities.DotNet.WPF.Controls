@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:Utilities.DotNet.WPF.Controls"
              xmlns:etk="clr-namespace:Xceed.Wpf.Toolkit;assembly=DotNetProjects.Wpf.Extended.Toolkit"
              mc:Ignorable="d"
-             d:DesignHeight="30" d:DesignWidth="400">
+             d:DesignWidth="80">
     <etk:ButtonSpinner DataContext="{Binding ElementName=ThisControl}" Spin="OnSpin" BorderThickness="1" IsTabStop="False"
                        ValidSpinDirection="{Binding ValidSpinDirection}">
         <TextBox HorizontalContentAlignment="Right" VerticalContentAlignment="Center"

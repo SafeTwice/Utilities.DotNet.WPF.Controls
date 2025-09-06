@@ -28,8 +28,12 @@
                 <local:FileSelectionBoxDemo/>
             </TabItem>
 
-            <TabItem Header="NumericUpDown">
-                <local:NumericUpDownDemo/>
+            <TabItem Header="IntegerUpDown">
+                <local:IntegerUpDownDemo/>
+            </TabItem>
+
+            <TabItem Header="DualIntegerUpDown">
+                <local:DualIntegerUpDownDemo/>
             </TabItem>
 
             <TabItem Header="ListSelector" d:IsSelected="True">

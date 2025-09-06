@@ -17,4 +17,10 @@
       <ProjectReference Include="..\Lib\Utilities.DotNet.WPF.Controls.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="DualIntegerUpDownDemo.xaml.cs">
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
 </Project>

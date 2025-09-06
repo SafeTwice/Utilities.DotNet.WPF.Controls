@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="Utilities.DotNet.WPF.Controls.Demo.IntegerUpDownDemo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Utilities.DotNet.WPF.Controls.Demo"
+             xmlns:controls="clr-namespace:Utilities.DotNet.WPF.Controls;assembly=Utilities.DotNet.WPF.Controls"
+             mc:Ignorable="d"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Border BorderThickness="1" BorderBrush="DarkGray" Background="{x:Static SystemColors.WindowBrush}">
+            <StackPanel Orientation="Vertical" Margin="0,20">
+
+                <controls:IntegerUpDown Width="110" Height="24" Margin="5"
+                                        Value="{Binding Value}" Minimum="{Binding MinValue}" Maximum="{Binding MaxValue}"
+                                        IsEnabled="{Binding IsChecked, ElementName=IntegerUpDown_IsEnabled}"
+                                        ValueToText="{Binding ValueToText}"/>
+
+                <DockPanel Margin="15" HorizontalAlignment="Center">
+                    <TextBlock DockPanel.Dock="Left" Text="Value:" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <TextBox IsReadOnly="True" Padding="2" Text="{Binding Value}" Width="80"/>
+                </DockPanel>
+
+                <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
+                    <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
+
+                        <TextBlock Text="Minimum" Style="{StaticResource Settings.Label}"/>
+                        <controls:IntegerUpDown Width="95" Height="24" Margin="0,5"
+                                                Value="{Binding MinValue}" Maximum="{Binding MaxValue}"/>
+
+                        <TextBlock Text="Maximum" Style="{StaticResource Settings.Label}"/>
+                        <controls:IntegerUpDown Width="95" Height="24" Margin="0,5"
+                                                Value="{Binding MaxValue}" Minimum="{Binding MinValue}"/>
+
+                        <TextBlock Text="Custom ValueToText" Style="{StaticResource Settings.Label}"/>
+                        <CheckBox IsChecked="{Binding CustomValueToText}"
+                                  Style="{DynamicResource Settings.CheckBox}"/>
+
+                        <TextBlock Text="IsEnabled" Style="{StaticResource Settings.Label}"/>
+                        <CheckBox x:Name="IntegerUpDown_IsEnabled" IsChecked="True"
+                                  Style="{DynamicResource Settings.CheckBox}"/>
+
+                    </controls:AutoGrid>
+                </GroupBox>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

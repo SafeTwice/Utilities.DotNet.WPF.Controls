@@ -45,7 +45,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public static readonly DependencyProperty MinimumProperty =
             DependencyProperty.Register( nameof( Minimum ), typeof( int ), typeof( IntegerUpDown ),
-                new FrameworkPropertyMetadata( 0, FrameworkPropertyMetadataOptions.AffectsRender, OnMinimumChangedEvent ) );
+                new FrameworkPropertyMetadata( int.MinValue, FrameworkPropertyMetadataOptions.AffectsRender, OnBoundsChangedEvent ) );
 
         /// <summary>
         /// Minimum value of the control.
@@ -63,7 +63,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register( nameof( Maximum ), typeof( int ), typeof( IntegerUpDown ),
-                new FrameworkPropertyMetadata( 1000, FrameworkPropertyMetadataOptions.AffectsRender, OnMaximumChangedEvent ) );
+                new FrameworkPropertyMetadata( int.MaxValue, FrameworkPropertyMetadataOptions.AffectsRender, OnBoundsChangedEvent ) );
 
         /// <summary>
         /// Maximum value of the control.
@@ -81,7 +81,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public static readonly DependencyProperty ValueToTextProperty =
             DependencyProperty.Register( nameof( ValueToText ), typeof( ValueToTextFunc ), typeof( IntegerUpDown ),
-                new FrameworkPropertyMetadata( new ValueToTextFunc( ( _, v ) => DefaultValueToText( v ) ),
+                new FrameworkPropertyMetadata( new ValueToTextFunc( ( c, v ) => DefaultValueToText( c, v ) ),
                     FrameworkPropertyMetadataOptions.AffectsRender, OnValueChangedEvent ) );
 
         /// <summary>
@@ -186,9 +186,10 @@ namespace Utilities.DotNet.WPF.Controls
         /// <summary>
         /// Converts the given value to a text representation.
         /// </summary>
+        /// <param name="integerUpDown">Control for which to convert the value.</param>
         /// <param name="value">Value to convert.</param>
         /// <returns>Text representation of the value.</returns>
-        public static string DefaultValueToText( int value )
+        public static string DefaultValueToText( IntegerUpDown integerUpDown, int value )
         {
             return value.ToString();
         }
@@ -207,23 +208,16 @@ namespace Utilities.DotNet.WPF.Controls
             UpdateViewFromValue();
         }
 
-        private static void OnMinimumChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
+        private static void OnBoundsChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
         {
-            ( d as IntegerUpDown )?.OnMinimumChangedEvent();
+            ( d as IntegerUpDown )?.OnBoundsChangedEvent();
         }
 
-        private void OnMinimumChangedEvent()
+        private void OnBoundsChangedEvent()
         {
-            InvokePropertyChanged( nameof( ValidSpinDirection ) );
-        }
+            Value = CoerceValue( Value );
 
-        private static void OnMaximumChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
-        {
-            ( d as IntegerUpDown )?.OnMaximumChangedEvent();
-        }
-
-        private void OnMaximumChangedEvent()
-        {
+            InvokePropertyChanged( nameof( Value ) );
             InvokePropertyChanged( nameof( ValidSpinDirection ) );
             InvokePropertyChanged( nameof( ValueMaxLength ) );
         }
@@ -256,6 +250,17 @@ namespace Utilities.DotNet.WPF.Controls
 
                 Value = CoerceValue( value );
             }
+            catch( OverflowException )
+            {
+                if( ValueText.StartsWith( "-" ) )
+                {
+                    Value = Minimum;
+                }
+                else
+                {
+                    Value = Maximum;
+                }
+            }
             catch( Exception )
             {
                 // Value update ignored
@@ -266,7 +271,7 @@ namespace Utilities.DotNet.WPF.Controls
 
         private void UpdateViewFromValue()
         {
-            m_valueText = DefaultValueToText( Value );
+            m_valueText = DefaultValueToText( this, Value );
             DecoratedValueText = ValueToText( this, Value );
 
             InvokePropertyChanged( nameof( ValueText ) );
@@ -333,7 +338,7 @@ namespace Utilities.DotNet.WPF.Controls
             PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( propertyName ) );
         }
 
-        private int TextToValue( string text )
+        private static int TextToValue( string text )
         {
             return int.Parse( text );
         }
@@ -352,8 +357,40 @@ namespace Utilities.DotNet.WPF.Controls
 
         private int CalculateMaxLength()
         {
-            return Math.Max( (int) Math.Ceiling( Math.Log10( Maximum ) ),
-                             ( Minimum < 0 ) ? 1 + (int) Math.Ceiling( Math.Log10( -Minimum ) ) : 0 );
+            if( ( Minimum == int.MinValue ) || ( Maximum == int.MaxValue ) )
+            {
+                return 11;
+            }
+
+            int minimumMagnitude;
+            if( Minimum == 0 )
+            {
+                minimumMagnitude = 0;
+            }
+            else if( Minimum > 0 )
+            {
+                minimumMagnitude = (int) Math.Floor( Math.Log10( Minimum ) );
+            }
+            else
+            {
+                minimumMagnitude = ( 1 + (int) Math.Floor( Math.Log10( -Minimum ) ) );
+            }
+
+            int maximumMagnitude;
+            if( Maximum == 0 )
+            {
+                maximumMagnitude = 0;
+            }
+            else if( Maximum > 0 )
+            {
+                maximumMagnitude = (int) Math.Floor( Math.Log10( Maximum ) );
+            }
+            else
+            {
+                maximumMagnitude = ( 1 + (int) Math.Floor( Math.Log10( -Maximum ) ) );
+            }
+
+            return ( 1 + Math.Max( minimumMagnitude, maximumMagnitude ) );
         }
 
         //===========================================================================

@@ -2,9 +2,9 @@
 
 namespace Utilities.DotNet.WPF.Controls.Demo
 {
-    public partial class NumericUpDownDemo : UserControl
+    public partial class DualIntegerUpDownDemo : UserControl
     {
-        public NumericUpDownDemo()
+        public DualIntegerUpDownDemo()
         {
             InitializeComponent();
         }
