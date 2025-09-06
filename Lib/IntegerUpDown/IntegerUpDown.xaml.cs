@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Utilities.DotNet.WPF.Controls.Helpers;
 using Xceed.Wpf.Toolkit;
 
 namespace Utilities.DotNet.WPF.Controls
@@ -236,7 +236,7 @@ namespace Utilities.DotNet.WPF.Controls
 
         private void OnValuePreviewTextInput( object sender, TextCompositionEventArgs e )
         {
-            if( !CheckIsValidText( e.Text, ( (TextBox) sender ).CaretIndex ) )
+            if( !e.IsValidInteger( Minimum < 0 ) )
             {
                 e.Handled = true;
             }
@@ -341,45 +341,6 @@ namespace Utilities.DotNet.WPF.Controls
         private static int TextToValue( string text )
         {
             return int.Parse( text );
-        }
-
-        private bool CheckIsValidText( string text, int insertionIndex )
-        {
-            if( Minimum < 0 )
-            {
-                bool hasMinus = ValueText.StartsWith( "-" );
-
-                for( int i = 0; i < text.Length; i++ )
-                {
-                    var inputChar = text[ i ];
-
-                    if( char.IsDigit( inputChar ) &&
-                        ( !hasMinus || ( ( insertionIndex + i ) > 0 ) ) )
-                    {
-                        continue;
-                    }
-
-                    if( inputChar != '-' )
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        if( ( insertionIndex + i ) > 0 )
-                        {
-                            return false;
-                        }
-
-                        hasMinus = true;
-                    }
-                }
-
-                return true;
-            }
-            else
-            {
-                return text.All( char.IsDigit );
-            }
         }
 
         private int CalculateMaxLength()

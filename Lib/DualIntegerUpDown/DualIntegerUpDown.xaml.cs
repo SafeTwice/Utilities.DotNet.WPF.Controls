@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Utilities.DotNet.WPF.Controls.Helpers;
 using Xceed.Wpf.Toolkit;
 
 namespace Utilities.DotNet.WPF.Controls
@@ -52,7 +53,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public static readonly DependencyProperty MinimumProperty =
             DependencyProperty.Register( nameof( Minimum ), typeof( int ), typeof( DualIntegerUpDown ),
-                new FrameworkPropertyMetadata( 0, FrameworkPropertyMetadataOptions.AffectsRender, OnMinimumChangedEvent ) );
+                new FrameworkPropertyMetadata( int.MinValue, FrameworkPropertyMetadataOptions.AffectsRender, OnBoundsChangedEvent ) );
 
         /// <summary>
         /// Minimum value of the control.
@@ -70,7 +71,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register( nameof( Maximum ), typeof( int ), typeof( DualIntegerUpDown ),
-                new FrameworkPropertyMetadata( 1000, FrameworkPropertyMetadataOptions.AffectsRender, OnMaximumChangedEvent ) );
+                new FrameworkPropertyMetadata( int.MaxValue, FrameworkPropertyMetadataOptions.AffectsRender, OnBoundsChangedEvent ) );
 
         /// <summary>
         /// Maximum value of the control.
@@ -88,7 +89,7 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         public static readonly DependencyProperty FactorProperty =
             DependencyProperty.Register( nameof( Factor ), typeof( int ), typeof( DualIntegerUpDown ),
-                new FrameworkPropertyMetadata( 10, FrameworkPropertyMetadataOptions.AffectsRender, OnFactorChangedEvent ) );
+                new FrameworkPropertyMetadata( 10, FrameworkPropertyMetadataOptions.AffectsRender, OnFactorChangedEvent, CoerceFactor ) );
 
         /// <summary>
         /// Factor used to calculate <see cref="Value"/> from the two displayed values.
@@ -264,14 +265,15 @@ namespace Utilities.DotNet.WPF.Controls
         /// </summary>
         [Bindable( false )]
         [Browsable( false )]
-        public int UpperValueMaxLength => (int) Math.Ceiling( Math.Log10( Maximum / Factor ) );
+        public int UpperValueMaxLength => Math.Max( CalculateMaxLength( Maximum / Factor ),
+                                                    CalculateMaxLength( Minimum / Factor ) );
 
         /// <summary>
         /// Maximum length of the lower value text box.
         /// </summary>
         [Bindable( false )]
         [Browsable( false )]
-        public int LowerValueMaxLength => (int) Math.Ceiling( Math.Log10( Factor ) );
+        public int LowerValueMaxLength => CalculateMaxLength( Factor - 1 );
 
         #endregion
 
@@ -310,23 +312,16 @@ namespace Utilities.DotNet.WPF.Controls
             UpdateViewFromValue();
         }
 
-        private static void OnMinimumChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
+        private static void OnBoundsChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
         {
-            ( d as DualIntegerUpDown )?.OnMinimumChangedEvent();
+            ( d as DualIntegerUpDown )?.OnBoundsChangedEvent();
         }
 
-        private void OnMinimumChangedEvent()
+        private void OnBoundsChangedEvent()
         {
-            InvokePropertyChanged( nameof( ValidSpinDirection ) );
-        }
+            Value = CoerceValue( Value );
 
-        private static void OnMaximumChangedEvent( DependencyObject d, DependencyPropertyChangedEventArgs e )
-        {
-            ( d as DualIntegerUpDown )?.OnMaximumChangedEvent();
-        }
-
-        private void OnMaximumChangedEvent()
-        {
+            InvokePropertyChanged( nameof( Value ) );
             InvokePropertyChanged( nameof( ValidSpinDirection ) );
             InvokePropertyChanged( nameof( UpperValueMaxLength ) );
         }
@@ -340,6 +335,8 @@ namespace Utilities.DotNet.WPF.Controls
         {
             InvokePropertyChanged( nameof( UpperValueMaxLength ) );
             InvokePropertyChanged( nameof( LowerValueMaxLength ) );
+
+            UpdateViewFromValue();
         }
 
         private void OnLowerSpin( object sender, SpinEventArgs e )
@@ -368,7 +365,7 @@ namespace Utilities.DotNet.WPF.Controls
 
         private void OnUpperValuePreviewTextInput( object sender, TextCompositionEventArgs e )
         {
-            if( !g_inputRegex.IsMatch( e.Text ) )
+            if( !e.IsValidInteger( Minimum < 0 ) )
             {
                 e.Handled = true;
             }
@@ -376,7 +373,7 @@ namespace Utilities.DotNet.WPF.Controls
 
         private void OnLowerValuePreviewTextInput( object sender, TextCompositionEventArgs e )
         {
-            if( !g_inputRegex.IsMatch( e.Text ) )
+            if( !e.Text.All( char.IsDigit ) )
             {
                 e.Handled = true;
             }
@@ -388,16 +385,41 @@ namespace Utilities.DotNet.WPF.Controls
             {
                 checked
                 {
-                    int upperValue = int.Parse( UpperValueText );
+                    int value = int.Parse( UpperValueText );
+                    value *= Factor;
 
-                    int value = Value % Factor;
-                    value += ( upperValue * Factor );
+                    // Negativeness must be checked at string level to detect properly the "-0" case.
+                    var isNegative = UpperValueText.StartsWith( "-" );
+
+                    int lowerValue;
+                    if( Value > 0 )
+                    {
+                        lowerValue = Value % Factor;
+                    }
+                    else
+                    {
+                        lowerValue = (int) ( ( -( (long) Value ) ) % Factor );
+                    }
+
+                    value += isNegative ? -lowerValue : lowerValue;
 
                     Value = CoerceValue( value );
                 }
             }
+            catch( OverflowException )
+            {
+                if( UpperValueText.StartsWith( "-" ) )
+                {
+                    Value = Minimum;
+                }
+                else
+                {
+                    Value = Maximum;
+                }
+            }
             catch( Exception )
             {
+                // Value update ignored
             }
 
             UpdateViewFromValue();
@@ -422,13 +444,15 @@ namespace Utilities.DotNet.WPF.Controls
 
                     int value = Value / Factor;
                     value *= Factor;
-                    value += lowerValue;
+
+                    value += ( Value < 0 ) ? -lowerValue : lowerValue;
 
                     Value = CoerceValue( value );
                 }
             }
             catch( Exception )
             {
+                // Value update ignored
             }
 
             UpdateViewFromValue();
@@ -436,11 +460,23 @@ namespace Utilities.DotNet.WPF.Controls
 
         private void UpdateViewFromValue()
         {
-            var upperValue = Value / Factor;
-            var lowerValue = Value % Factor;
+            if( Value >= 0 )
+            {
+                var upperValue = Value / Factor;
+                var lowerValue = Value % Factor;
 
-            m_upperValueText = upperValue.ToString();
-            m_lowerValueText = lowerValue.ToString();
+                m_upperValueText = upperValue.ToString();
+                m_lowerValueText = lowerValue.ToString();
+            }
+            else
+            {
+                var absValue = -( (long) Value );
+                var upperValue = absValue / Factor;
+                var lowerValue = absValue % Factor;
+
+                m_upperValueText = "-" + upperValue.ToString();
+                m_lowerValueText = lowerValue.ToString();
+            }
 
             InvokePropertyChanged( nameof( UpperValueText ) );
             InvokePropertyChanged( nameof( LowerValueText ) );
@@ -501,16 +537,48 @@ namespace Utilities.DotNet.WPF.Controls
             }
         }
 
+        private static object CoerceFactor( DependencyObject d, object baseValue )
+        {
+            int factor = (int) baseValue;
+            if( factor < 2 )
+            {
+                return 2;
+            }
+            else
+            {
+                return factor;
+            }
+        }
+
+        private static int CalculateMaxLength( int value )
+        {
+            if( value == int.MaxValue )
+            {
+                return 11;
+            }
+
+            int magnitude;
+            if( value == 0 )
+            {
+                magnitude = 0;
+            }
+            else if( value > 0 )
+            {
+                magnitude = (int) Math.Floor( Math.Log10( value ) );
+            }
+            else
+            {
+                magnitude = ( 1 + (int) Math.Floor( Math.Log10( -value ) ) );
+            }
+
+            return ( magnitude + 1 );
+        }
+
+
         private void InvokePropertyChanged( string propertyName )
         {
             PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( propertyName ) );
         }
-
-        //===========================================================================
-        //                           PRIVATE CONSTANTS
-        //===========================================================================
-
-        private static readonly Regex g_inputRegex = new( @"^\d*$" );
 
         //===========================================================================
         //                           PRIVATE ATTRIBUTES

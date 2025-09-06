@@ -11,8 +11,49 @@
     <Grid>
         <Border BorderThickness="1" BorderBrush="DarkGray" Background="{x:Static SystemColors.WindowBrush}">
             <StackPanel Orientation="Vertical" Margin="0,20">
-                <controls:IntegerUpDown Width="80" Margin="5"/>
-                <controls:DualIntegerUpDown Width="200" Margin="5" UpperLabel="h" LowerLabel="min" Factor="60"/>
+
+                <controls:DualIntegerUpDown HorizontalAlignment="Center" Margin="5"
+                                            Value="{Binding Value}" Factor="{Binding Factor}"
+                                            Minimum="{Binding MinValue}" Maximum="{Binding MaxValue}"
+                                            UpperLabel="{Binding UpperLabel}" LowerLabel="{Binding LowerLabel}"
+                                            IsEnabled="{Binding IsChecked, ElementName=DualIntegerUpDown_IsEnabled}"
+                                            UpperValueWidth="105" LowerValueWidth="50"/>
+
+                <DockPanel Margin="15" HorizontalAlignment="Center">
+                    <TextBlock DockPanel.Dock="Left" Text="Value:" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <TextBox IsReadOnly="True" Padding="2" Text="{Binding Value}" Width="80"/>
+                </DockPanel>
+
+                <GroupBox Header="Settings" HorizontalAlignment="Center" Padding="5">
+                    <controls:AutoGrid AutoColumns="2" d:ShowGridLines="True">
+
+                        <TextBlock Text="Minimum" Style="{StaticResource Settings.Label}"/>
+                        <controls:IntegerUpDown Width="95" Height="24" Margin="0,5"
+                                                Value="{Binding MinValue}" Maximum="{Binding MaxValue}"/>
+
+                        <TextBlock Text="Maximum" Style="{StaticResource Settings.Label}"/>
+                        <controls:IntegerUpDown Width="95" Height="24" Margin="0,5"
+                                                Value="{Binding MaxValue}" Minimum="{Binding MinValue}"/>
+
+                        <TextBlock Text="Factor" Style="{StaticResource Settings.Label}"/>
+                        <controls:IntegerUpDown Width="95" Height="24" Margin="0,5"
+                                                Value="{Binding Factor}" Minimum="2" Maximum="1000"/>
+
+                        <TextBlock Text="UpperLabel" Style="{StaticResource Settings.Label}"/>
+                        <TextBox Text="{Binding UpperLabel}" Width="100" Height="24"
+                                 Style="{DynamicResource Settings.TextBox}"/>
+
+                        <TextBlock Text="LowerLabel" Style="{StaticResource Settings.Label}"/>
+                        <TextBox Text="{Binding LowerLabel}" Width="100" Height="24"
+                                 Style="{DynamicResource Settings.TextBox}"/>
+
+                        <TextBlock Text="IsEnabled" Style="{StaticResource Settings.Label}"/>
+                        <CheckBox x:Name="DualIntegerUpDown_IsEnabled" IsChecked="True"
+                                  Style="{DynamicResource Settings.CheckBox}"/>
+
+                    </controls:AutoGrid>
+                </GroupBox>
+
             </StackPanel>
         </Border>
     </Grid>
